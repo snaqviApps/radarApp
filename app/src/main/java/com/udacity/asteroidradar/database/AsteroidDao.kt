@@ -23,7 +23,7 @@ interface AsteroidDao {
 
 
     @Query("SELECT * FROM asteroid_info_table ORDER BY asteroidId DESC")
-    fun getAllAsteroids(): LiveData<List<Asteroid>>
+    fun getAllAsteroids(): LiveData<List<Asteroid>?>
 
     /**
      * Selects and returns the latest data.
