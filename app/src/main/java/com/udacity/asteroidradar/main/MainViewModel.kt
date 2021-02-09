@@ -2,14 +2,13 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.database.AsteroidDao
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MainViewModel(
     val database: AsteroidDao,
@@ -20,7 +19,9 @@ class MainViewModel(
     private var viewModelJob = Job()
 
     //  TODO_done (02): create a Aseroid liveData var and use a coroutine to initialize it from database\
-    private var availableAsteroid = MutableLiveData<Asteroid?>()
+    private val _availableAsteroid = MutableLiveData<Asteroid>()
+    val availableAsteroid: MutableLiveData<Asteroid>?
+    get() = _availableAsteroid
 
     //  TODO_done (03): Define a scope of the coroutines to run in
     init {
@@ -29,15 +30,12 @@ class MainViewModel(
 
     private fun intializeaAvailableAsteroid() {
         viewModelScope.launch {
-            availableAsteroid.value = getAsteroidFromDatabase()
+            _availableAsteroid.value = getAsteroidFromDatabase()
         }
     }
 
-    private suspend fun getAsteroidFromDatabase(): Asteroid? {
+    private suspend fun getAsteroidFromDatabase(): LiveData<Asteroid>? {
         return database.getLatestAsteroid()
-//        return withContext(Dispatchers.IO) {
-//            database.getLatestAsteroid()
-//        }
     }
 
     //  TODO_done (04): get all asteroids from database

@@ -29,6 +29,6 @@ interface AsteroidDao {
      * Selects and returns the latest data.
      */
     @Query("SELECT * FROM ASTEROID_INFO_TABLE ORDER BY asteroidId DESC LIMIT 1")
-    fun getLatestAsteroid(): Asteroid?
+    fun getLatestAsteroid(): LiveData<Asteroid>?
 
 }
