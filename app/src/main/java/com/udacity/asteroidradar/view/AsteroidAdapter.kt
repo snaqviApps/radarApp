@@ -19,12 +19,9 @@ class AsteroidAdapter:  RecyclerView.Adapter<AsteroidAdapter.AsteroidViewHolder>
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val view = layoutInflater.inflate(layout.main_asteroid_item_list, parent, false)
-        return AsteroidViewHolder(view)
+        return AsteroidViewHolder.from(parent)
 
     }
-
 
     override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
         val item = data[position]
@@ -32,9 +29,7 @@ class AsteroidAdapter:  RecyclerView.Adapter<AsteroidAdapter.AsteroidViewHolder>
         holder.bind(item)
     }
 
-
-
-    class AsteroidViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class AsteroidViewHolder private constructor(itemView: View): RecyclerView.ViewHolder(itemView) {
         val asteroidCodeName: TextView = itemView.findViewById(id.tv_asteroidCodename)
         val asteroidName2nd: TextView = itemView.findViewById(id.tv_asteroidName2nd)
         var statusImage: ImageView = itemView.findViewById(id.img_Status)
@@ -44,5 +39,16 @@ class AsteroidAdapter:  RecyclerView.Adapter<AsteroidAdapter.AsteroidViewHolder>
             asteroidName2nd.text = item.closeApproachDate
             statusImage.setImageResource(drawable.asteroid_hazardous)
         }
+
+        companion object {
+            fun from(parent: ViewGroup): AsteroidViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(layout.main_asteroid_item_list, parent, false)
+                return AsteroidViewHolder(view)
+            }
+        }
+
     }
+
+
 }
