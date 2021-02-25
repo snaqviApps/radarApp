@@ -19,24 +19,14 @@ class MainViewModel(
     private var viewModelJob = Job()
 
     //  TODO_done (02): create a Aseroid liveData var and use a coroutine to initialize it from database\
-    private var _availableAsteroid = MutableLiveData<Asteroid>()
-    val availableAsteroid: MutableLiveData<Asteroid>?
+    private val _availableAsteroid = database.getLatestAsteroid()
+    val availableAsteroid: LiveData<Asteroid>?
         get() = _availableAsteroid
-
-    //  TODO_done (03): Define a scope of the coroutines to run in
-    init {
-        intializeaAvailableAsteroid()
-    }
-
-    private fun intializeaAvailableAsteroid() {
-        viewModelScope.launch {
-            _availableAsteroid = getAsteroidFromDatabase() as MutableLiveData<Asteroid>
-        }
-    }
-
-    private suspend fun getAsteroidFromDatabase(): LiveData<Asteroid>? {
-        return database.getLatestAsteroid()
-    }
+    /**
+     *
+     * TODO_done (03): Define a scope of the coroutines to run in
+     * TODO_done (02) sufficed
+     */
 
     //  TODO_done (04): get all asteroids from database
     private val allAsteroids = database.getAllAsteroids()
