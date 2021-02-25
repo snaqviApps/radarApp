@@ -10,10 +10,8 @@ import com.udacity.asteroidradar.database.AsteroidDao
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class MainViewModel(
-    val database: AsteroidDao,
-    application: Application
-) : AndroidViewModel(application) {
+class MainViewModel(val database: AsteroidDao,
+                    application: Application) : AndroidViewModel(application) {
 
     //  TODO_done (01): Create a viewModelJob and override onCancel() for cancelling coroutines
     private var viewModelJob = Job()
@@ -29,7 +27,7 @@ class MainViewModel(
      */
 
     //  TODO_done (04): get all asteroids from database
-    private val allAsteroids = database.getAllAsteroids()
+    val asteroids = database.getAllAsteroids()
 
     //  TODO_done (05): Add local functions for insert(), update() and clear()
     private suspend fun insert(asteroid: Asteroid) {
