@@ -40,3 +40,13 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     val context = textView.context
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
 }
+
+@BindingAdapter("asteroidId")
+fun TextView.bindTextViewAsteroidId(textView: TextView, id: Long){
+    textView.text = id.toString()
+}
+
+@BindingAdapter("asteroidApproachDate")
+fun TextView.bindTextViewToAsteroidApproachDate(textView: TextView, codeName: String){
+    textView.text = codeName
+}

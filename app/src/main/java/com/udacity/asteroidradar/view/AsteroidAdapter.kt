@@ -1,15 +1,13 @@
 package com.udacity.asteroidradar.view
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.ListAdapter
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.udacity.asteroidradar.R.*
 import com.udacity.asteroidradar.database.Asteroid
+import com.udacity.asteroidradar.databinding.MainAsteroidItemListBinding
 
 class AsteroidAdapter: ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>(AsteroidDiffUtilCallbacks()) {
 
@@ -24,22 +22,27 @@ class AsteroidAdapter: ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>
         holder.bind(item)
     }
 
-    class AsteroidViewHolder private constructor(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val asteroidCodeName: TextView = itemView.findViewById(id.tv_asteroidCodename)
-        val asteroidName2nd: TextView = itemView.findViewById(id.tv_asteroidName2nd)
-        var statusImage: ImageView = itemView.findViewById(id.img_Status)
+    // 3. TODO_ : Refactor and rename the ViewHolder class’s constructor parameter to take a ListItemSleepNightBinding
+    class AsteroidViewHolder private constructor(val binding: MainAsteroidItemListBinding): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Asteroid) {              // added as 'extension function for, anoter
-            asteroidCodeName.text = item.codename
-            asteroidName2nd.text = item.closeApproachDate
-            statusImage.setImageResource(drawable.asteroid_hazardous)
+//            binding.tvAsteroidCodename.text = item.codename
+//            binding.tvAsteroidName2nd.text = item.closeApproachDate
+//            binding.imgStatus.setImageResource(drawable.asteroid_hazardous)
+            binding.asteroid = item
+            binding.executePendingBindings()
+
         }
 
+        // 1. TODO_ : In the companion object, Replace LayoutInflater with ListItemSleepNightBinding
         companion object {
+
+        // 2. TODO_: In the from() function, use ListItemSleepNightBinding.inflate to create a binding object.
             fun from(parent: ViewGroup): AsteroidViewHolder {
-                val view = LayoutInflater.from(parent.context)
-                        .inflate(layout.main_asteroid_item_list, parent, false)
-                return AsteroidViewHolder(view)
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = MainAsteroidItemListBinding.inflate(
+                        layoutInflater, parent, false)
+                return AsteroidViewHolder(binding)
             }
         }
     }
