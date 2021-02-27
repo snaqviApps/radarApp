@@ -15,7 +15,7 @@ fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
 }
 
 @BindingAdapter("asteroidStatusImage")
-fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean, item: Asteroid?) {
+fun bindDetailsStatusImage(imageView: ImageView, isHazardous: Boolean) {
     if (isHazardous) {
         imageView.setImageResource(R.drawable.asteroid_hazardous)
     } else {
@@ -42,11 +42,18 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 }
 
 @BindingAdapter("asteroidId")
-fun TextView.bindTextViewAsteroidId(textView: TextView, id: Long){
-    textView.text = id.toString()
+fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid){
+    textView.text = asteroid.asteroidId.toString()
 }
 
-@BindingAdapter("asteroidApproachDate")
-fun TextView.bindTextViewToAsteroidApproachDate(textView: TextView, codeName: String){
-    textView.text = codeName
+/**
+ * Using binding-adapter-method as Extension function to TextView
+ */
+@BindingAdapter("astroidApproachDate")
+fun TextView.bindCloseApproachDate(asteroid: Asteroid){
+    asteroid?.let {
+        text = it.closeApproachDate
+    }
 }
+
+

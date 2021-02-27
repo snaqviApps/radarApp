@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.udacity.asteroidradar.R.*
 import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.databinding.MainAsteroidItemListBinding
 
@@ -13,7 +12,6 @@ class AsteroidAdapter: ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AsteroidViewHolder {
         return AsteroidViewHolder.from(parent)
-
     }
 
     override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
@@ -23,15 +21,11 @@ class AsteroidAdapter: ListAdapter<Asteroid, AsteroidAdapter.AsteroidViewHolder>
     }
 
     // 3. TODO_ : Refactor and rename the ViewHolder class’s constructor parameter to take a ListItemSleepNightBinding
-    class AsteroidViewHolder private constructor(val binding: MainAsteroidItemListBinding): RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: Asteroid) {              // added as 'extension function for, anoter
-//            binding.tvAsteroidCodename.text = item.codename
-//            binding.tvAsteroidName2nd.text = item.closeApproachDate
-//            binding.imgStatus.setImageResource(drawable.asteroid_hazardous)
+    class AsteroidViewHolder private constructor(
+        private val binding: MainAsteroidItemListBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: Asteroid) {
             binding.asteroid = item
             binding.executePendingBindings()
-
         }
 
         // 1. TODO_ : In the companion object, Replace LayoutInflater with ListItemSleepNightBinding
@@ -57,5 +51,4 @@ class AsteroidDiffUtilCallbacks: DiffUtil.ItemCallback<Asteroid>(){
     override fun areContentsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
         return oldItem == newItem
     }
-
 }
