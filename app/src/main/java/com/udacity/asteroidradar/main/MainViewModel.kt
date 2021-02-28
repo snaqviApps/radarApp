@@ -56,6 +56,19 @@ class MainViewModel(val database: AsteroidDao,
         database.clear()
     }
 
+    /** LiveDate (Observerable) for Navigation */
+    private val _navigateToDetailsFragment = MutableLiveData<Asteroid?>()
+    val navigateToDetailsFragment
+    get() = _navigateToDetailsFragment
+
+    fun onAsteroidClicked(asteroidSelected: Asteroid){
+        _navigateToDetailsFragment.value = asteroidSelected
+    }
+
+    fun onAsteroidNavigated(){
+        _navigateToDetailsFragment.value = null
+    }
+
 }
 
 
