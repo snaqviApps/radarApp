@@ -13,6 +13,7 @@ import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.view.AsteroidAdapter
 import com.udacity.asteroidradar.view.AsteroidListener
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
 
@@ -43,7 +44,13 @@ class MainFragment : Fragment() {
             }
         })
         binding.asteroidRecycler.adapter = adapter
-        mainFragmentViewModel.asteroids?.observe(viewLifecycleOwner, Observer {
+
+
+        mainFragmentViewModel.availableAsteroid?.observe(viewLifecycleOwner, Observer {
+//            Toast.makeText(activity, it.closeApproachDate, Toast.LENGTH_SHORT).show()             // closeApproachDate is null
+        })
+
+        mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
             }

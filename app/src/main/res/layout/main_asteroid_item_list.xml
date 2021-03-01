@@ -17,9 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:layout_marginBaseline="@dimen/main_item_layout_margin"
-        android:onClick="@{()-> clickListener.onClick(asteroid)}"
-        >
-        <!--        @{()-> } format called a data-binding-lambda-->
+        android:onClick="@{()-> clickListener.onClick(asteroid)}">
 
         <TextView
             android:id="@+id/tv_asteroidId"

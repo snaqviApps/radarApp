@@ -51,7 +51,7 @@ fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid){
  */
 @BindingAdapter("astroidApproachDate")
 fun TextView.bindCloseApproachDate(asteroid: Asteroid){
-    asteroid?.let {
+    asteroid.let {
         text = it.closeApproachDate
     }
 }
