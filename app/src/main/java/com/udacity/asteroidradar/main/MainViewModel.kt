@@ -17,8 +17,9 @@ class MainViewModel(val database: AsteroidDao,
     private var viewModelJob = Job()
 
     //  TODO_done (02): create a Aseroid liveData var and use a coroutine to initialize it from database\
-    private val _availableAsteroid = database.getLatestAsteroid()
-    val availableAsteroid: LiveData<Asteroid>?
+//    private val _availableAsteroid = database.getLatestAsteroid()
+    private val _availableAsteroid = MutableLiveData<Asteroid>()
+    val availableAsteroid: LiveData<Asteroid>
         get() = _availableAsteroid
     /**
      *
@@ -37,9 +38,7 @@ class MainViewModel(val database: AsteroidDao,
     }
 
     init {
-        _availableAsteroid?.value.apply {
-            getDefaultDate()
-        }
+        _availableAsteroid.value = getDefaultDate()
     }
 
     private fun getDefaultDate():Asteroid{
