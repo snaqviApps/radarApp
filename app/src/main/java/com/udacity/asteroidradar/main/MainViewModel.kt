@@ -36,6 +36,18 @@ class MainViewModel(val database: AsteroidDao,
         }
     }
 
+    init {
+        getDefaultDate()
+    }
+
+    internal fun getDefaultDate(){
+        if (_availableAsteroid != null) {
+            _availableAsteroid.value = Asteroid(0L, "dummy-asteroid", "01/01/2020"
+                ,0.05, 0.02, 1.5, 2555.25, false
+            )
+        }
+    }
+
 //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
     private suspend fun update(asteroid: Asteroid){
         viewModelScope.launch {
