@@ -45,9 +45,12 @@ class MainFragment : Fragment() {
         })
         binding.asteroidRecycler.adapter = adapter
 
-        mainFragmentViewModel.availableAsteroid.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(activity, it.toString(), Toast.LENGTH_SHORT).show()             // closeApproachDate is null
-        })
+        /**
+         * this Toast only needs to test any available data in db
+         */
+//        mainFragmentViewModel.availableAsteroid?.observe(viewLifecycleOwner, Observer {
+//            Toast.makeText(activity, it.toString(), Toast.LENGTH_SHORT).show()             // closeApproachDate is null
+//        })
 
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {

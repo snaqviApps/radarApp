@@ -16,10 +16,9 @@ class MainViewModel(val database: AsteroidDao,
     //  TODO_done (01): Create a viewModelJob and override onCancel() for cancelling coroutines
     private var viewModelJob = Job()
 
-    //  TODO_done (02): create a Aseroid liveData var and use a coroutine to initialize it from database\
-//    private val _availableAsteroid = database.getLatestAsteroid()
-    private val _availableAsteroid = MutableLiveData<Asteroid>()
-    val availableAsteroid: LiveData<Asteroid>
+    //  TODO_done (02): create a Aseroid liveData var and use a coroutine to initialize it from database
+    private val _availableAsteroid = database.getLatestAsteroid()       // reads from database directly
+    val availableAsteroid: LiveData<Asteroid>?
         get() = _availableAsteroid
     /**
      *
@@ -37,23 +36,26 @@ class MainViewModel(val database: AsteroidDao,
         }
     }
 
+    /**
+     * Using Dispatcher.IO
+     *
+     * init {
+     *  insertDummyData()
+     * }
+     *
+     * private fun insertDummyData(){
+     * val assetroid = Asteroid(0L, "dummy-asteroid", "01/01/2020",0.05, 0.02 , 1.5, 2555.25, false)
+     * }
+     *
+     * */
+
     init {
-        _availableAsteroid.value = getDefaultDate()
+        viewModelScope.launch {
+            database.insert(getDefaultDate())
+        }
     }
 
     private fun getDefaultDate():Asteroid{
-//            _availableAsteroid?.value.apply {
-//                Asteroid(0L
-//                    , "dummy-asteroid"
-//                    , "01/01/2020"
-//                    ,0.05
-//                    , 0.02
-//                    , 1.5
-//                    , 2555.25
-//                    , false
-//                )
-//            }
-
         return Asteroid(0L
                     , "dummy-asteroid"
                     , "01/01/2020"
@@ -63,9 +65,7 @@ class MainViewModel(val database: AsteroidDao,
                     , 2555.25
                     , false
                 )
-
         }
-
 
 //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
     private suspend fun update(asteroid: Asteroid){
