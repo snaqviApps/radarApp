@@ -43,15 +43,9 @@ class MainFragment : Fragment() {
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
         })
+
+        /** get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
-
-        /**
-         * this Toast only needs to test any available data in db
-         */
-//        mainFragmentViewModel.availableAsteroid?.observe(viewLifecycleOwner, Observer {
-//            Toast.makeText(activity, it.toString(), Toast.LENGTH_SHORT).show()             // closeApproachDate is null
-//        })
-
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
@@ -63,6 +57,12 @@ class MainFragment : Fragment() {
                 this.findNavController().navigate(MainFragmentDirections
                     .actionMainFragmentToDetailFragment(asteroid))
                 mainFragmentViewModel.onAsteroidNavigated()
+            }
+        })
+
+        mainFragmentViewModel.asteroidCallResponse.observe(viewLifecycleOwner, Observer {
+            it.let {
+                Toast.makeText(activity, "Response results: ${it[0]}", Toast.LENGTH_SHORT).show()
             }
         })
 

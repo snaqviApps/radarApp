@@ -1,17 +1,29 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.udacity.asteroidradar.BuildConfig
+import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.database.AsteroidDao
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainViewModel(val database: AsteroidDao,
                     application: Application) : AndroidViewModel(application) {
+
+    private val _asteroidCallResponse =  MutableLiveData<List<Asteroid>>()
+    val asteroidCallResponse: MutableLiveData<List<Asteroid>>
+    get() = _asteroidCallResponse
 
     //  TODO_done (01): Create a viewModelJob and override onCancel() for cancelling coroutines
     private var viewModelJob = Job()
@@ -35,9 +47,33 @@ class MainViewModel(val database: AsteroidDao,
             database.insert(asteroid)
         }
     }
+    init {
+        viewModelScope.launch {
+            getAsteroidsProperties()
+        }
+    }
+
+    private fun getAsteroidsProperties() {
+        AsteroidApi.retrofitService.getAsteroids(
+            start_date = "2015-09-07",
+            end_date = "2015-09-08",
+            api_key = BuildConfig.NASA_API_KEY)
+            .enqueue(object : Callback<List<Asteroid>> {
+                override fun onResponse(call: Call<List<Asteroid>>, response: Response<List<Asteroid>>
+                ) {
+                    _asteroidCallResponse.value = response.body()
+                    print(("Response: " + _asteroidCallResponse.value))
+                }
+                override fun onFailure(call: Call<List<Asteroid>>, t: Throwable) {
+                    print("Failure: " + t.message)
+                }
+
+            })
+
+    }
 
     /**
-     * Using Dispatcher.IO
+     * 1. Using Dispatcher.IO
      *
      * init {
      *  insertDummyData()
@@ -49,7 +85,10 @@ class MainViewModel(val database: AsteroidDao,
      *
      * */
 
-    init {
+    /**
+     * 2. Using viewModelScope.launch
+     *
+     * init {
         viewModelScope.launch {
             database.insert(getDefaultDate())
         }
@@ -66,6 +105,7 @@ class MainViewModel(val database: AsteroidDao,
                     , false
                 )
         }
+    */
 
 //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
     private suspend fun update(asteroid: Asteroid){
@@ -99,8 +139,8 @@ class MainViewModel(val database: AsteroidDao,
     fun onAsteroidNavigated(){
         _navigateToDetailsFragment.value = null
     }
-
 }
+
 
 
 
