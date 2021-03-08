@@ -27,7 +27,8 @@ private const val SAMPLE_UDACITY_BASE_URL = "https://mars.udacity.com/realestate
 
 private val retrofit = Retrofit.Builder()
     .baseUrl(BASE_URL)
-    .addConverterFactory(GsonConverterFactory.create())
+//    .addConverterFactory(GsonConverterFactory.create())
+    .addConverterFactory(ScalarsConverterFactory.create())
     .client(OkHttpClient().newBuilder().build())
     .build()
 
@@ -38,7 +39,8 @@ interface AsteroidApiService {
         @Query("end_date") end_date: String,
         @Query("api_Key") api_key: String
     )
-            : Call<List<Asteroid>>
+//            : Call<List<Asteroid>>
+            : Call<String>
 }
 
 /**

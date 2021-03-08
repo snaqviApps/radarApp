@@ -12,7 +12,10 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
 
     val asteroidList = ArrayList<Asteroid>()
 
-    val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates()
+    val extString = (jsonResult.optJSONObject("links")?.get("self") as String).substring(48, 58)
+    val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates(extString)
+
+
     for (formattedDate in nextSevenDaysFormattedDates) {
         val dateAsteroidJsonArray = nearEarthObjectsJson.getJSONArray(formattedDate)
 
@@ -42,15 +45,27 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     return asteroidList
 }
 
-private fun getNextSevenDaysFormattedDates(): ArrayList<String> {
+private fun getNextSevenDaysFormattedDates(extractedStart_date: String): ArrayList<String> {
     val formattedDateList = ArrayList<String>()
 
     val calendar = Calendar.getInstance()
+
+    val yyyy = extractedStart_date.substring(0, 4).toInt()
+    val mm = extractedStart_date.substring(5,7).toInt()
+    val dd = extractedStart_date.substring(8, 10).toInt()
+
+//    val currentTimeTemp = calendar.set(
+//        yyyy,mm, dd
+//    )
+//    print(currentTimeTemp)
+
+
     for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
         val currentTime = calendar.time
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
         formattedDateList.add(dateFormat.format(currentTime))
         calendar.add(Calendar.DAY_OF_YEAR, 1)
+
     }
 
     return formattedDateList

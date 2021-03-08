@@ -1,7 +1,6 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -55,20 +54,20 @@ class MainViewModel(val database: AsteroidDao,
 
     private fun getAsteroidsProperties() {
         AsteroidApi.retrofitService.getAsteroids(
-            start_date = "2015-09-07",
-            end_date = "2015-09-08",
+            start_date = "2017-09-11",
+            end_date = "2017-09-17",
             api_key = BuildConfig.NASA_API_KEY)
-            .enqueue(object : Callback<List<Asteroid>> {
-                override fun onResponse(call: Call<List<Asteroid>>, response: Response<List<Asteroid>>
-                ) {
-                    _asteroidCallResponse.value = response.body()
+            .enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    _asteroidCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()!!))
                     print(("Response: " + _asteroidCallResponse.value))
                 }
-                override fun onFailure(call: Call<List<Asteroid>>, t: Throwable) {
-                    print("Failure: " + t.message)
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    print("nw-call-exception: " + t.message)
                 }
 
             })
+
 
     }
 
