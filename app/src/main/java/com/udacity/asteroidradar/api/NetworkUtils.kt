@@ -6,17 +6,22 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.time.days
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
-
     val asteroidList = ArrayList<Asteroid>()
+    val asteroidDates = ArrayList<String>()
 
-    val extString = (jsonResult.optJSONObject("links")?.get("self") as String).substring(48, 58)
-    val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates(extString)
+    for (key in nearEarthObjectsJson.keys()){
+        asteroidDates.add(key)
+    }
 
+//    val extString = (jsonResult.optJSONObject("links")?.get("self") as String).substring(48, 58)
+//    val nextSevenDaysFormattedDates = getNextSevenDaysFormattedDates(extString)
+//    for (formattedDate in nextSevenDaysFormattedDates) {
 
-    for (formattedDate in nextSevenDaysFormattedDates) {
+    for (formattedDate in asteroidDates) {
         val dateAsteroidJsonArray = nearEarthObjectsJson.getJSONArray(formattedDate)
 
         for (i in 0 until dateAsteroidJsonArray.length()) {
@@ -47,26 +52,17 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
 
 private fun getNextSevenDaysFormattedDates(extractedStart_date: String): ArrayList<String> {
     val formattedDateList = ArrayList<String>()
-
     val calendar = Calendar.getInstance()
-
     val yyyy = extractedStart_date.substring(0, 4).toInt()
     val mm = extractedStart_date.substring(5,7).toInt()
     val dd = extractedStart_date.substring(8, 10).toInt()
 
-//    val currentTimeTemp = calendar.set(
-//        yyyy,mm, dd
-//    )
-//    print(currentTimeTemp)
-
-
+    calendar.set(yyyy, mm, dd)
     for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
         val currentTime = calendar.time
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
         formattedDateList.add(dateFormat.format(currentTime))
         calendar.add(Calendar.DAY_OF_YEAR, 1)
-
     }
-
     return formattedDateList
 }
