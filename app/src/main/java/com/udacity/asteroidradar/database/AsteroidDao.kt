@@ -10,7 +10,8 @@ import androidx.room.Update
 interface AsteroidDao {
 
     @Insert
-    suspend fun insert(asteroid: Asteroid)
+//    suspend fun insert(asteroid: Asteroid)
+    suspend fun insert(asteroids: List<Asteroid>)
 
     @Update
     suspend fun update(asteroid: Asteroid)

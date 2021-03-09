@@ -60,11 +60,11 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.asteroidCallResponse.observe(viewLifecycleOwner, Observer {
-            it.let {
-                Toast.makeText(activity, "Response results: $it", Toast.LENGTH_LONG).show()
-            }
-        })
+//        mainFragmentViewModel.asteroidCallResponse.observe(viewLifecycleOwner, Observer {
+//            it.let {
+//                Toast.makeText(activity, "Response results: $it", Toast.LENGTH_LONG).show()
+//            }
+//        })
         setHasOptionsMenu(true)
         return binding.root
     }

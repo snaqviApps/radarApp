@@ -32,18 +32,16 @@ class MainViewModel(val database: AsteroidDao,
     val availableAsteroid: LiveData<Asteroid>?
         get() = _availableAsteroid
     /**
-     *
-     * TODO_done (03): Define a scope of the coroutines to run in
-     * TODO_done (02) sufficed
+     * TODO_done (02, 03): Define a scope of the coroutines
      */
 
     //  TODO_done (04): get all asteroids from database
     val asteroids = database.getAllAsteroids()
 
     //  TODO_done (05): Add local functions for insert(), update() and clear()
-    private suspend fun insert(asteroid: Asteroid) {
+    private suspend fun insert(asteroids: List<Asteroid>) {
         viewModelScope.launch {
-            database.insert(asteroid)
+            database.insert(asteroids)
         }
     }
     init {
@@ -51,7 +49,6 @@ class MainViewModel(val database: AsteroidDao,
             getAsteroidsProperties()
         }
     }
-
     private fun getAsteroidsProperties() {
         AsteroidApi.retrofitService.getAsteroids(
             start_date = "2017-09-11",
@@ -60,51 +57,16 @@ class MainViewModel(val database: AsteroidDao,
             .enqueue(object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     _asteroidCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()!!))
+                    viewModelScope.launch {
+                        insert(_asteroidCallResponse.value as ArrayList<Asteroid>)
+                    }
                     print(("Response: " + _asteroidCallResponse.value))
                 }
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     print("nw-call-exception: " + t.message)
                 }
-
             })
-
-
     }
-
-    /**
-     * 1. Using Dispatcher.IO
-     *
-     * init {
-     *  insertDummyData()
-     * }
-     *
-     * private fun insertDummyData(){
-     * val assetroid = Asteroid(0L, "dummy-asteroid", "01/01/2020",0.05, 0.02 , 1.5, 2555.25, false)
-     * }
-     *
-     * */
-
-    /**
-     * 2. Using viewModelScope.launch
-     *
-     * init {
-        viewModelScope.launch {
-            database.insert(getDefaultDate())
-        }
-    }
-
-    private fun getDefaultDate():Asteroid{
-        return Asteroid(0L
-                    , "dummy-asteroid"
-                    , "01/01/2020"
-                    ,0.05
-                    , 0.02
-                    , 1.5
-                    , 2555.25
-                    , false
-                )
-        }
-    */
 
 //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
     private suspend fun update(asteroid: Asteroid){
@@ -126,7 +88,7 @@ class MainViewModel(val database: AsteroidDao,
         database.clear()
     }
 
-    /** LiveDate (Observerable) for Navigation */
+    /** LiveDate (Observable) for Navigation */
     private val _navigateToDetailsFragment = MutableLiveData<Asteroid?>()
     val navigateToDetailsFragment
     get() = _navigateToDetailsFragment
