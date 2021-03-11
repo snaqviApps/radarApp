@@ -25,14 +25,11 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_main, container, false)
-
         val application = requireNotNull(this.activity).application
         val dataSource = AsteroidDatabase.getInstance(application).asteroidDao
         val viewModelFactory = MainViewModelFactory(dataSource, application)
-
         val mainFragmentViewModel = ViewModelProvider(this,  viewModelFactory).get(MainViewModel::class.java)
 
         binding.lifecycleOwner = this
@@ -43,7 +40,6 @@ class MainFragment : Fragment() {
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
         })
-
         /** get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
@@ -57,12 +53,6 @@ class MainFragment : Fragment() {
                 this.findNavController().navigate(MainFragmentDirections
                     .actionMainFragmentToDetailFragment(asteroid))
                 mainFragmentViewModel.onAsteroidNavigated()
-            }
-        })
-
-        mainFragmentViewModel.asteroidCallResponse.observe(viewLifecycleOwner, Observer {
-            it.let {
-                Toast.makeText(activity, "Response results: ${it.size}", Toast.LENGTH_LONG).show()
             }
         })
         setHasOptionsMenu(true)

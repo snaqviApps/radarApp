@@ -54,6 +54,7 @@ class MainViewModel(val database: AsteroidDao,
             start_date = "2017-09-11",
             end_date = "2017-09-17",
             api_key = BuildConfig.NASA_API_KEY)
+//            .enqueue(object : Callback<String> {
             .enqueue(object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     _asteroidCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()!!))
@@ -75,9 +76,6 @@ class MainViewModel(val database: AsteroidDao,
         }
     }
 
-//  TODO_done (07): transform asteroids into a asteroid-String using 'formatAsteroids()'
-
-    // TODO_Done: clear job as well
     override fun onCleared() {
         super.onCleared()
         viewModelScope.launch {
@@ -101,7 +99,3 @@ class MainViewModel(val database: AsteroidDao,
         _navigateToDetailsFragment.value = null
     }
 }
-
-
-
-

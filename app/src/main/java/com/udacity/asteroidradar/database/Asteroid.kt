@@ -11,7 +11,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Asteroid(
         @PrimaryKey(autoGenerate = true)
-        val asteroidId: Long = 0L,
+//        val asteroidId: Long = 0L,
+        val asteroidId: Long,
 
         @ColumnInfo(name = "code_name")
         val codename: String,
