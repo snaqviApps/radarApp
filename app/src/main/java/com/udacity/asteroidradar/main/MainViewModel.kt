@@ -1,12 +1,15 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.BuildConfig
+import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.api.PictureOfTheDayApi
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.database.AsteroidDao
@@ -20,9 +23,13 @@ import retrofit2.Response
 class MainViewModel(val database: AsteroidDao,
                     application: Application) : AndroidViewModel(application) {
 
-    private val _asteroidCallResponse =  MutableLiveData<List<Asteroid>>()
+    private val _asteroidCallResponse = MutableLiveData<List<Asteroid>>()
     val asteroidCallResponse: MutableLiveData<List<Asteroid>>
-    get() = _asteroidCallResponse
+        get() = _asteroidCallResponse
+
+    private val _pictureOfDay = MutableLiveData<List<PictureOfDay>>()
+    val pictureOfDay: MutableLiveData<List<PictureOfDay>>
+        get() = _pictureOfDay
 
     //  TODO_done (01): Create a viewModelJob and override onCancel() for cancelling coroutines
     private var viewModelJob = Job()
@@ -31,6 +38,7 @@ class MainViewModel(val database: AsteroidDao,
     private val _availableAsteroid = database.getLatestAsteroid()       // reads from database directly
     val availableAsteroid: LiveData<Asteroid>?
         get() = _availableAsteroid
+
     /**
      * TODO_done (02, 03): Define a scope of the coroutines
      */
@@ -44,33 +52,61 @@ class MainViewModel(val database: AsteroidDao,
             database.insert(asteroids)
         }
     }
+
     init {
         viewModelScope.launch {
             getAsteroidsProperties()
+            getPictureOfDay()
         }
     }
-    private fun getAsteroidsProperties() {
-        AsteroidApi.retrofitService.getAsteroids(
-            start_date = "2017-09-11",
-            end_date = "2017-09-17",
-            api_key = BuildConfig.NASA_API_KEY)
-//            .enqueue(object : Callback<String> {
-            .enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    _asteroidCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()!!))
-                    viewModelScope.launch {
-                        insert(_asteroidCallResponse.value as ArrayList<Asteroid>)
-                    }
-                    print(("Response: " + _asteroidCallResponse.value))
-                }
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    print("nw-call-exception: " + t.message)
-                }
-            })
+
+    private fun getPictureOfDay() {
+        try {
+            val listResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
+            if (listResult.size > 0) {
+                _pictureOfDay.value = listResult
+            }
+        } catch (e: Exception) {
+            print("nw-call-exception: ${e.message}")
+        }
+
     }
 
-//  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
-    private suspend fun update(asteroid: Asteroid){
+    private fun getAsteroidsProperties() {
+        AsteroidApi.retrofitService.getAsteroids(
+                start_date = "2017-09-11",
+                end_date = "2017-09-17",
+                api_key = BuildConfig.NASA_API_KEY)
+                .enqueue(object : Callback<String> {
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        _asteroidCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()!!))
+                        viewModelScope.launch {
+                            insert(_asteroidCallResponse.value as ArrayList<Asteroid>)
+                        }
+                        print(("Response: " + _asteroidCallResponse.value))
+                    }
+
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        print("nw-call-exception: ${t.message}")
+                    }
+                })
+
+//                .also {
+////                    try {
+////                        val listResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
+////                        if (listResult.size > 0) {
+////                            _pictureOfDay.value = listResult
+////                        }
+////                    } catch (e: Exception) {
+////                        print("nw-call-exception: ${e.message}")
+////                    }
+//                }
+
+    }
+
+
+    //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
+    private suspend fun update(asteroid: Asteroid) {
         viewModelScope.launch {
             database.update(asteroid)
         }
@@ -82,20 +118,21 @@ class MainViewModel(val database: AsteroidDao,
             clear()
         }
     }
-    private suspend fun clear(){
+
+    private suspend fun clear() {
         database.clear()
     }
 
     /** LiveDate (Observable) for Navigation */
     private val _navigateToDetailsFragment = MutableLiveData<Asteroid?>()
     val navigateToDetailsFragment
-    get() = _navigateToDetailsFragment
+        get() = _navigateToDetailsFragment
 
-    fun onAsteroidClicked(asteroidSelected: Asteroid){
+    fun onAsteroidClicked(asteroidSelected: Asteroid) {
         _navigateToDetailsFragment.value = asteroidSelected
     }
 
-    fun onAsteroidNavigated(){
+    fun onAsteroidNavigated() {
         _navigateToDetailsFragment.value = null
     }
 }
