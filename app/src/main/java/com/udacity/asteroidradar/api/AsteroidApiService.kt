@@ -16,7 +16,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-
 /**
  * This is complete URL to be constructed with to dynamic info
  * @param start_date
@@ -43,13 +42,14 @@ interface AsteroidApiService {
             @Query("start_date") start_date: String,
             @Query("end_date") end_date: String,
             @Query("api_key") api_key: String
-    ) : Call<String>
+    ): Call<String>
 }
 
 interface PictureOfTheDayApiService {
     @GET(PictureOfTHEDAY_END_POINT)
-    fun getPictureOfTheDay(
-            @Query("api_key") api_key: String): List<PictureOfDay>
+    suspend fun getPictureOfTheDay(
+            @Query("api_key") api_key: String):
+            Call<PictureOfDay>
 }
 
 object AsteroidApi {

@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -19,6 +20,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.logging.Level.INFO
 
 class MainViewModel(val database: AsteroidDao,
                     application: Application) : AndroidViewModel(application) {
@@ -27,8 +29,8 @@ class MainViewModel(val database: AsteroidDao,
     val asteroidCallResponse: MutableLiveData<List<Asteroid>>
         get() = _asteroidCallResponse
 
-    private val _pictureOfDay = MutableLiveData<List<PictureOfDay>>()
-    val pictureOfDay: MutableLiveData<List<PictureOfDay>>
+    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
+    val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
     //  TODO_done (01): Create a viewModelJob and override onCancel() for cancelling coroutines
@@ -56,20 +58,33 @@ class MainViewModel(val database: AsteroidDao,
     init {
         viewModelScope.launch {
             getAsteroidsProperties()
+//            getPictureOfDay()
+        }
+
+        viewModelScope.launch {
             getPictureOfDay()
         }
     }
 
-    private fun getPictureOfDay() {
+    private suspend fun getPictureOfDay() {
         try {
-            val listResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
-            if (listResult.size > 0) {
-                _pictureOfDay.value = listResult
-            }
+            val pictureResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
+            pictureResult.enqueue(object : Callback<PictureOfDay> {
+//            PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
+//                    .enqueue(object : Callback<PictureOfDay> {
+                override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
+                    Log.e("TAG", "exception: ${t.message}")
+                }
+                override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
+                    _pictureOfDay.value = response.body()
+                    Log.i("picture-json: ", _pictureOfDay.value.toString())
+                }
+            })
         } catch (e: Exception) {
-            print("nw-call-exception: ${e.message}")
+//            print("nw-call-exception: ${e.message}")
+            print("picture-json -exception: ${e.stackTrace}")
+            Log.i("picture-json: ", e.stackTraceToString())
         }
-
     }
 
     private fun getAsteroidsProperties() {
@@ -85,7 +100,6 @@ class MainViewModel(val database: AsteroidDao,
                         }
                         print(("Response: " + _asteroidCallResponse.value))
                     }
-
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         print("nw-call-exception: ${t.message}")
                     }

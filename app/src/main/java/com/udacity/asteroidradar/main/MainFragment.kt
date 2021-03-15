@@ -55,6 +55,10 @@ class MainFragment : Fragment() {
                 mainFragmentViewModel.onAsteroidNavigated()
             }
         })
+
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(activity, "pic-today-data: ${it}", Toast.LENGTH_SHORT).show()
+        })
         setHasOptionsMenu(true)
         return binding.root
     }
