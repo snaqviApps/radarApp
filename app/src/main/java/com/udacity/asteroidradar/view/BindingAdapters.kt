@@ -2,7 +2,9 @@ package com.udacity.asteroidradar
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.database.Asteroid
 
 @BindingAdapter("statusIcon")
@@ -49,10 +51,20 @@ fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid){
 /**
  * Using binding-adapter-method as Extension function to TextView
  */
-@BindingAdapter("astroidApproachDate")
+@BindingAdapter("asteroidApproachDate")
 fun TextView.bindCloseApproachDate(asteroid: Asteroid){
     asteroid.let {
         text = it.closeApproachDate
+    }
+}
+
+@BindingAdapter("dayPictureUrl")
+fun bindDayImage(imgView: ImageView, imgUrl: String?){
+    imgUrl?.let {
+        val imgUrl = imgUrl.toUri().buildUpon().scheme("https").build()
+        Picasso.with(imgView.context)
+                .load(imgUrl)
+                .into(imgView)
     }
 }
 

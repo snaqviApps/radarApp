@@ -58,20 +58,17 @@ class MainViewModel(val database: AsteroidDao,
     init {
         viewModelScope.launch {
             getAsteroidsProperties()
-//            getPictureOfDay()
         }
 
-        viewModelScope.launch {
-            getPictureOfDay()
-        }
+//        viewModelScope.launch {
+//            getPictureOfDay()
+//        }
     }
 
-    private suspend fun getPictureOfDay() {
+   /* private fun getPictureOfDay() {
         try {
             val pictureResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
             pictureResult.enqueue(object : Callback<PictureOfDay> {
-//            PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
-//                    .enqueue(object : Callback<PictureOfDay> {
                 override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
                     Log.e("TAG", "exception: ${t.message}")
                 }
@@ -81,11 +78,9 @@ class MainViewModel(val database: AsteroidDao,
                 }
             })
         } catch (e: Exception) {
-//            print("nw-call-exception: ${e.message}")
-            print("picture-json -exception: ${e.stackTrace}")
             Log.i("picture-json: ", e.stackTraceToString())
         }
-    }
+    }*/
 
     private fun getAsteroidsProperties() {
         AsteroidApi.retrofitService.getAsteroids(
@@ -100,26 +95,30 @@ class MainViewModel(val database: AsteroidDao,
                         }
                         print(("Response: " + _asteroidCallResponse.value))
                     }
+
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         print("nw-call-exception: ${t.message}")
                     }
-                })
+                }).also {
+                    try {
+                        val pictureResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
+                        pictureResult.enqueue(object : Callback<PictureOfDay> {
+                            override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
+                                Log.e("TAG", "exception: ${t.message}")
+                            }
 
-//                .also {
-////                    try {
-////                        val listResult = PictureOfTheDayApi.picOfTheDayService.getPictureOfTheDay(BuildConfig.NASA_API_KEY)
-////                        if (listResult.size > 0) {
-////                            _pictureOfDay.value = listResult
-////                        }
-////                    } catch (e: Exception) {
-////                        print("nw-call-exception: ${e.message}")
-////                    }
-//                }
-
+                            override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
+                                _pictureOfDay.value = response.body()
+                                Log.i("picture-json: ", _pictureOfDay.value.toString())
+                            }
+                        })
+                    } catch (e: Exception) {
+                        print("picture-json -exception: ${e.stackTrace}")
+                        Log.i("picture-json: ", e.stackTraceToString())
+                    }
+                }
     }
-
-
-    //  TODO_done (06): implement click handlers for Start, and Clear buttons using coroutines to do the database work
+    
     private suspend fun update(asteroid: Asteroid) {
         viewModelScope.launch {
             database.update(asteroid)

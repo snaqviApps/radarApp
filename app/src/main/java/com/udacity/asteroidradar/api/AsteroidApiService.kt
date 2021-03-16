@@ -47,7 +47,7 @@ interface AsteroidApiService {
 
 interface PictureOfTheDayApiService {
     @GET(PictureOfTHEDAY_END_POINT)
-    suspend fun getPictureOfTheDay(
+    fun getPictureOfTheDay(
             @Query("api_key") api_key: String):
             Call<PictureOfDay>
 }

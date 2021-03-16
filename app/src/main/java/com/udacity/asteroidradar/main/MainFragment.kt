@@ -56,9 +56,9 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {
-            Toast.makeText(activity, "pic-today-data: ${it}", Toast.LENGTH_SHORT).show()
-        })
+        /** Observing the Picture-of-the-Day field: pictureOfDay, in 'MainViewModel' */
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })
+
         setHasOptionsMenu(true)
         return binding.root
     }
