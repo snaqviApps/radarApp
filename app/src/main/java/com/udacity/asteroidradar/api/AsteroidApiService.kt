@@ -14,6 +14,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -25,7 +26,14 @@ import retrofit2.http.Query
 private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(ScalarsConverterFactory.create())
-        .client(OkHttpClient().newBuilder().build())
+        .client(OkHttpClient().newBuilder()
+                /**
+                 * To utilize in case of connection - sync - time-outs
+                .connectTimeout(50, TimeUnit.MILLISECONDS)
+                .readTimeout(50, TimeUnit.MILLISECONDS)
+                .callTimeout(10, TimeUnit.MILLISECONDS)
+                */
+                .build())
         .build()
 
 private val moshiPicOfTheDay = Moshi.Builder()
@@ -59,7 +67,7 @@ object AsteroidApi {
 }
 
 object PictureOfTheDayApi {
-    val picOfTheDayService: PictureOfTheDayApiService by lazy {
+    val retrofitPicOfTheDayService: PictureOfTheDayApiService by lazy {
         retrofitPicOfTheDay.create(PictureOfTheDayApiService::class.java)
     }
 }

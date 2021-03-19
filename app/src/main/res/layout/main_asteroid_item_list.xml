@@ -26,8 +26,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:textColor="@color/default_text_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:asteroidId="@{asteroid}"
-
             app:layout_constraintEnd_toStartOf="@+id/img_Status"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -40,14 +42,16 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:textColor="#7C7777"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:asteroidApproachDate="@{asteroid}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/img_Status"
             app:layout_constraintHorizontal_bias="0.045"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_asteroidId"
-            app:layout_constraintVertical_bias="1.0"
-            app:asteroidApproachDate="@{asteroid}"
-            />
+            app:layout_constraintVertical_bias="1.0" />
 
         <ImageView
             android:id="@+id/img_Status"
@@ -55,12 +59,12 @@
             android:layout_height="36dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
+            android:contentDescription="@string/asteroid_type"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_asteroidId"
             app:layout_constraintTop_toTopOf="@+id/tv_asteroidId"
             app:layout_constraintVertical_bias="0.282"
-            app:statusIcon="@{asteroid.potentiallyHazardous}"
-            />
+            app:statusIcon="@{asteroid.potentiallyHazardous}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

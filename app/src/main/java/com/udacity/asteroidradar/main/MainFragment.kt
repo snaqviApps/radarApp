@@ -36,7 +36,6 @@ class MainFragment : Fragment() {
         binding.mainAsteroidXmlViewModel = mainFragmentViewModel
         val adapter = AsteroidAdapter(AsteroidListener { asteroid ->
             run {
-                Toast.makeText(context, "This is itemId clicked: ${asteroid}", Toast.LENGTH_SHORT).show()
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
         })
