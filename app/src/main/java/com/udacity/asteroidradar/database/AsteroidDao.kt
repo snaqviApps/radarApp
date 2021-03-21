@@ -2,7 +2,6 @@ package com.udacity.asteroidradar.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 
 @Dao
 interface AsteroidDao {
@@ -22,9 +21,8 @@ interface AsteroidDao {
     @Query("SELECT * FROM asteroid_info_table ORDER BY asteroidId DESC")
     fun getAllAsteroids(): LiveData<List<Asteroid>?>
 
-//    @Query("SELECT * FROM ASTEROID_INFO_TABLE where approach_date >= date (${getNextSevenDaysFormattedDates1()[0])} ORDER BY date(closeApproachDate) asc")
-    @Query("SELECT * from asteroid_info_table where approach_date BETWEEN date(:approach_date) AND date(:endDate) ORDER BY date(approach_date) asc")
-    fun getFilteredAsteroids(): LiveData<List<Asteroid>?>
+    @Query("SELECT * from asteroid_info_table where approach_date BETWEEN date(:startDate) AND date(:endDate) ORDER BY date(approach_date) asc")
+    fun getFilteredAsteroids(startDate: String, endDate: String): LiveData<List<Asteroid>?>
 
     /**
      * Selects and returns the latest data.

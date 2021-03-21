@@ -22,4 +22,5 @@
     <string name="nasa_picture_of_day">Picture of the day</string>
     <string name="AsteroidType">Asteroid Type</string>
     <string name="asteroid_type">Asteroid-Type</string>
+    <string name="status_view">"Status view"</string>
 </resources>

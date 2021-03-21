@@ -28,6 +28,8 @@ class MainViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
+    private var db_based_endDate = ""
+    private var db_based_startDate = ""
     private val _status = MutableLiveData<RadarApiStatus>()
     val status: LiveData<RadarApiStatus>
         get() = _status
@@ -48,23 +50,22 @@ class MainViewModel(
     val availableAsteroid: LiveData<Asteroid>?
         get() = _availableAsteroid
 
+    init {
+        getAsteroidsProperties()
+        db_based_startDate = getNextSevenDaysFormattedDates()[0]
+        db_based_endDate = getNextSevenDaysFormattedDates()[1]
+    }
+
     /**
      * TODO_done (04):
      * get all asteroids from database,
      * feed to recyclerView
-     *
      */
-    val asteroids = database.getAllAsteroids()
-
-    //  TODO_done (05): Add local functions for insert(), update() and clear()
+    val asteroids = database.getFilteredAsteroids(db_based_startDate, db_based_endDate)
     private suspend fun insert(asteroids: List<Asteroid>) {
         viewModelScope.launch {
             database.insert(asteroids)
         }
-    }
-
-    init {
-        getAsteroidsProperties()
     }
 
     private fun getAsteroidsProperties() {
@@ -92,12 +93,14 @@ class MainViewModel(
                 }
             }).also {
                 try {
+                    _status.value = RadarApiStatus.LOADING
                     val pictureResult =
                         PictureOfTheDayApi.retrofitPicOfTheDayService.getPictureOfTheDay(
                             BuildConfig.NASA_API_KEY
                         )
                     pictureResult.enqueue(object : Callback<PictureOfDay> {
                         override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
+                            _status.value = RadarApiStatus.ERROR
                             Log.e("TAG", "exception: ${t.message}")
                         }
 
@@ -106,6 +109,7 @@ class MainViewModel(
                             response: Response<PictureOfDay>
                         ) {
                             _pictureOfDay.value = response.body()
+                            _status.value = RadarApiStatus.DONE
                             Log.i("picture-json: ", _pictureOfDay.value.toString())
                         }
                     })

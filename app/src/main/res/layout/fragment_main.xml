@@ -62,7 +62,7 @@
             app:layout_constraintTop_toBottomOf="@+id/activity_main_image_of_the_day_layout"
             app:layout_constraintVertical_bias="0.0" />
 
-        <ProgressBar
+        <ImageView
             android:id="@+id/status_loading_wheel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,6 +72,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:asteroidsApiStatus="@{mainAsteroidXmlViewModel.status}"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/status_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

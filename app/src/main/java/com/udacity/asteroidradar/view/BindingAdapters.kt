@@ -46,7 +46,7 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 }
 
 @BindingAdapter("asteroidId")
-fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid){
+fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid) {
     textView.text = asteroid.asteroidId.toString()
 }
 
@@ -54,25 +54,25 @@ fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid){
  * Using binding-adapter-method as Extension function to TextView
  */
 @BindingAdapter("asteroidApproachDate")
-fun TextView.bindCloseApproachDate(asteroid: Asteroid){
+fun TextView.bindCloseApproachDate(asteroid: Asteroid) {
     asteroid.let {
         text = it.closeApproachDate
     }
 }
 
 @BindingAdapter("dayPictureUrl")
-fun bindDayImage(imgView: ImageView, imgUrl: String?){
+fun bindDayImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let {
         val imgUrl = imgUrl.toUri().buildUpon().scheme("https").build()
         Picasso.with(imgView.context)
-                .load(imgUrl)
-                .into(imgView)
+            .load(imgUrl)
+            .into(imgView)
     }
 }
 
 @BindingAdapter("asteroidsApiStatus")
-fun bindStatus(statusImageView: ImageView, status: RadarApiStatus?){
-    when(status){
+fun bindStatus(statusImageView: ImageView, status: RadarApiStatus?) {
+    when (status) {
         RadarApiStatus.LOADING -> {
             statusImageView.visibility = View.VISIBLE
             statusImageView.setImageResource(R.drawable.loading_animation)

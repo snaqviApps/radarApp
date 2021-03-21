@@ -7,12 +7,9 @@ import androidx.room.*
 abstract class AsteroidDatabase : RoomDatabase() {
 
     abstract val asteroidDao: AsteroidDao
-
     companion object {
-
         @Volatile
         private var INSTANCE: AsteroidDatabase? = null
-
         fun getInstance(context: Context): AsteroidDatabase {
             synchronized(this) {
                 var instance = INSTANCE
