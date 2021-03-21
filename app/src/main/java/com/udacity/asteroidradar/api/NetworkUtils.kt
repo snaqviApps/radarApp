@@ -1,12 +1,13 @@
 package com.udacity.asteroidradar.api
 
-import com.udacity.asteroidradar.database.Asteroid
+import android.annotation.SuppressLint
 import com.udacity.asteroidradar.Constants
+import com.udacity.asteroidradar.database.Asteroid
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.time.days
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
@@ -36,8 +37,10 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
             val isPotentiallyHazardous = asteroidJson
                 .getBoolean("is_potentially_hazardous_asteroid")
 
-            val asteroid = Asteroid(id, codename, formattedDate, absoluteMagnitude,
-                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous)
+            val asteroid = Asteroid(
+                id, codename, formattedDate, absoluteMagnitude,
+                estimatedDiameter, relativeVelocity, distanceFromEarth, isPotentiallyHazardous
+            )
             asteroidList.add(asteroid)
         }
     }
@@ -45,19 +48,17 @@ fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
 }
 
 /** sample Calendar utilization */
-private fun getNextSevenDaysFormattedDates(extractedStart_date: String): ArrayList<String> {
+fun getNextSevenDaysFormattedDates(): ArrayList<String> {
+
     val formattedDateList = ArrayList<String>()
+    formattedDateList.clear()
     val calendar = Calendar.getInstance()
-    val yyyy = extractedStart_date.substring(0, 4).toInt()
-    val mm = extractedStart_date.substring(5,7).toInt()
-    val dd = extractedStart_date.substring(8, 10).toInt()
-    calendar.set(yyyy, mm, dd)
 
     for (i in 0..Constants.DEFAULT_END_DATE_DAYS) {
         val currentTime = calendar.time
         val dateFormat = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT, Locale.getDefault())
         formattedDateList.add(dateFormat.format(currentTime))
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        calendar.add(Calendar.DAY_OF_YEAR, 6)
     }
     return formattedDateList
 }

@@ -2,7 +2,6 @@ package com.udacity.asteroidradar.api
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.Constants.BASE_URL
 import com.udacity.asteroidradar.Constants.END_POINT
 import com.udacity.asteroidradar.Constants.PictureOfTHEDAY_END_POINT
@@ -14,6 +13,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -47,9 +47,9 @@ private val retrofitPicOfTheDay = Retrofit.Builder()
 interface AsteroidApiService {
     @GET(END_POINT.plus("feed"))
     fun getAsteroids(
-            @Query("start_date") start_date: String,
-            @Query("end_date") end_date: String,
-            @Query("api_key") api_key: String
+        @Query("start_date") start_date: String,
+        @Query("end_date") end_date: String,
+        @Query("api_key") api_key: String
     ): Call<String>
 }
 

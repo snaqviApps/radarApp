@@ -2,7 +2,6 @@ package com.udacity.asteroidradar.main
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,13 +12,11 @@ import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.view.AsteroidAdapter
 import com.udacity.asteroidradar.view.AsteroidListener
-import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
 
     lateinit var binding: FragmentMainBinding
-
-    private val viewModel: MainViewModel by lazy {
+    private val viewModel: MainViewModel by lazy {      /** this instance is not being used */
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
@@ -47,17 +44,15 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.navigateToDetailsFragment.observe(viewLifecycleOwner, Observer {asteroid ->
-            asteroid?.let {
+        mainFragmentViewModel.navigateToDetailsFragment.observe(viewLifecycleOwner, Observer {asteroidsToNavigate ->
+            asteroidsToNavigate?.let {
                 this.findNavController().navigate(MainFragmentDirections
-                    .actionMainFragmentToDetailFragment(asteroid))
+                    .actionMainFragmentToDetailFragment(asteroidsToNavigate))
                 mainFragmentViewModel.onAsteroidNavigated()
             }
         })
 
-        /** Observing the Picture-of-the-Day field: pictureOfDay, in 'MainViewModel' */
-        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })
-
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })   /** Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -66,7 +61,6 @@ class MainFragment : Fragment() {
         inflater.inflate(R.menu.main_overflow_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return true
     }

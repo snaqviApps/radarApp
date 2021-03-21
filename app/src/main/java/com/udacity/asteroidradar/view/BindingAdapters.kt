@@ -1,11 +1,13 @@
 package com.udacity.asteroidradar
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
 import com.udacity.asteroidradar.database.Asteroid
+import com.udacity.asteroidradar.main.RadarApiStatus
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -68,4 +70,20 @@ fun bindDayImage(imgView: ImageView, imgUrl: String?){
     }
 }
 
+@BindingAdapter("asteroidsApiStatus")
+fun bindStatus(statusImageView: ImageView, status: RadarApiStatus?){
+    when(status){
+        RadarApiStatus.LOADING -> {
+            statusImageView.visibility = View.VISIBLE
+            statusImageView.setImageResource(R.drawable.loading_animation)
+        }
+        RadarApiStatus.ERROR -> {
+            statusImageView.visibility = View.VISIBLE
+            statusImageView.setImageResource(R.drawable.ic_connection_error)
+        }
+        RadarApiStatus.DONE -> {
+            statusImageView.visibility = View.GONE
+        }
+    }
+}
 

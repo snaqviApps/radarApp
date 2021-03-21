@@ -17,11 +17,14 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid
     override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
 //        val item = getItem(position)
 //        holder.bind(item)
-        holder.bind(getItem(position)!!, clickListener)  /** letting databinding know, about clickListener, by adding to 'each' view-holder */
+        holder.bind(getItem(position)!!, clickListener)  /** letting data-binding know, about clickListener, by adding to 'each' view-holder */
 
     }
 
-    // 3. TODO_ : Refactor and rename the ViewHolder class’s constructor parameter to take a ListItemSleepNightBinding
+    // 3. TODO_ : Refactor and rename the ViewHolder class’s constructor parameter to take a MainAsteroidItemListBinding
+    /**
+     * @param MainAsteroidItemListBinding
+     */
     class AsteroidViewHolder private constructor(
         private val binding: MainAsteroidItemListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Asteroid, clickListener: AsteroidListener) {
@@ -30,10 +33,8 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid
             binding.executePendingBindings()
         }
 
-        // 1. TODO_ : In the companion object, Replace LayoutInflater with ListItemSleepNightBinding
+        // 1. TODO_ : In the companion object, Replace LayoutInflater with MainAsteroidItemListBinding
         companion object {
-
-        // 2. TODO_: In the from() function, use ListItemSleepNightBinding.inflate to create a binding object.
             fun from(parent: ViewGroup): AsteroidViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = MainAsteroidItemListBinding.inflate(
