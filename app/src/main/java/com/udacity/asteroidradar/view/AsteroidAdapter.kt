@@ -17,7 +17,7 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid
     override fun onBindViewHolder(holder: AsteroidViewHolder, position: Int) {
 //        val item = getItem(position)
 //        holder.bind(item)
-        holder.bind(getItem(position)!!, clickListener)  /** letting data-binding know, about clickListener, by adding to 'each' view-holder */
+        holder.bind(getItem(position)!!, clickListener)  /** letting data-binding know about clickListener, by adding to 'each' view-holder */
 
     }
 

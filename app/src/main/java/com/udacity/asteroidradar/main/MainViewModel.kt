@@ -14,6 +14,7 @@ import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.Asteroid
 import com.udacity.asteroidradar.database.AsteroidDao
+import com.udacity.asteroidradar.api.TestJavaDataTypesUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -28,8 +29,8 @@ class MainViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private var db_based_endDate = ""
-    private var db_based_startDate = ""
+    private var dbBasedEndDate = ""
+    private var dbBasedStartDate = ""
     private val _status = MutableLiveData<RadarApiStatus>()
     val status: LiveData<RadarApiStatus>
         get() = _status
@@ -51,9 +52,12 @@ class MainViewModel(
         get() = _availableAsteroid
 
     init {
+        val testCharcters : TestJavaDataTypesUtils = TestJavaDataTypesUtils()
+        println(testCharcters.inputCharactersAnalysis("How are you", charArrayOf('i', 'o')))
+
         getAsteroidsProperties()
-        db_based_startDate = getNextSevenDaysFormattedDates()[0]
-        db_based_endDate = getNextSevenDaysFormattedDates()[1]
+        dbBasedStartDate = getNextSevenDaysFormattedDates()[0]
+        dbBasedEndDate = getNextSevenDaysFormattedDates()[1]
     }
 
     /**
@@ -61,7 +65,7 @@ class MainViewModel(
      * get all asteroids from database,
      * feed to recyclerView
      */
-    val asteroids = database.getFilteredAsteroids(db_based_startDate, db_based_endDate)
+    val asteroids = database.getFilteredAsteroids(dbBasedStartDate, dbBasedEndDate)
     private suspend fun insert(asteroids: List<Asteroid>) {
         viewModelScope.launch {
             database.insert(asteroids)
