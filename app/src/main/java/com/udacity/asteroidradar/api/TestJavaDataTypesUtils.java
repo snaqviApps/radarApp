@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * This is a utility class for data - analysis
+ * should needed to using Java - lambda
+ * as well as Java-8 Streams
+ */
 public class TestJavaDataTypesUtils {
 
     public Map<Character, Long> inputCharactersAnalysis(String argStr, char[] inputCharacters) {

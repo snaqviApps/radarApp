@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
+import com.udacity.asteroidradar.api.NetworkUtils
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.view.AsteroidAdapter
@@ -36,8 +37,8 @@ class MainFragment : Fragment() {
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
         })
-        /** get Adapter-handler and assign it to binding-adapter to manager recyclerView */
-        binding.asteroidRecycler.adapter = adapter
+
+        binding.asteroidRecycler.adapter = adapter                              /* get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
@@ -52,9 +53,15 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })   /** Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })   /* Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
         setHasOptionsMenu(true)
         return binding.root
+
+        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner){
+            if (it){
+
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

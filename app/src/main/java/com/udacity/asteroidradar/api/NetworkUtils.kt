@@ -1,13 +1,49 @@
 package com.udacity.asteroidradar.api
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
+import androidx.lifecycle.MutableLiveData
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.database.Asteroid
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.*
 import kotlin.collections.ArrayList
+
+class NetworkUtils constructor(
+    private val context: Context,
+    private val connectivityManager: ConnectivityManager,
+    private val networkRequest: NetworkRequest
+) {
+    companion object {
+        @JvmStatic
+        @Volatile
+        var isConnected = false
+        val isNetworkAvailable = MutableLiveData<Boolean>()
+    }
+    fun registerNetworkCallback() {
+        connectivityManager.registerNetworkCallback(networkRequest, getNetworkCallback())
+    }
+    private fun getNetworkCallback(): ConnectivityManager.NetworkCallback {
+        return object : ConnectivityManager.NetworkCallback() {
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                isConnected = false
+                isNetworkAvailable.postValue(false)
+            }
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                isConnected = true
+//                isNetworkAvailable.postTrue()
+                isNetworkAvailable.postValue(isConnected)
+            }
+        }
+    }
+}
+
 
 fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<Asteroid> {
     val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")
