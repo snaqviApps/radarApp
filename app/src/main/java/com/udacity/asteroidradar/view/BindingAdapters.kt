@@ -6,7 +6,7 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
-import com.udacity.asteroidradar.database.Asteroid
+import com.udacity.asteroidradar.database.DatabaseAsteroid
 import com.udacity.asteroidradar.main.RadarApiStatus
 
 @BindingAdapter("statusIcon")
@@ -46,16 +46,16 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 }
 
 @BindingAdapter("asteroidId")
-fun bindTextViewAsteroidId(textView: TextView, asteroid: Asteroid) {
-    textView.text = asteroid.asteroidId.toString()
+fun bindTextViewAsteroidId(textView: TextView, databaseAsteroid: DatabaseAsteroid) {
+    textView.text = databaseAsteroid.asteroidId.toString()
 }
 
 /**
  * Using binding-adapter-method as Extension function to TextView
  */
 @BindingAdapter("asteroidApproachDate")
-fun TextView.bindCloseApproachDate(asteroid: Asteroid) {
-    asteroid.let {
+fun TextView.bindCloseApproachDate(databaseAsteroid: DatabaseAsteroid) {
+    databaseAsteroid.let {
         text = it.closeApproachDate
     }
 }

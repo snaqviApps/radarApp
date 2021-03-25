@@ -7,14 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.BuildConfig
-import com.udacity.asteroidradar.PictureOfDay
-import com.udacity.asteroidradar.api.AsteroidApi
-import com.udacity.asteroidradar.api.PictureOfTheDayApi
-import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
-import com.udacity.asteroidradar.database.Asteroid
+import com.udacity.asteroidradar.database.PictureOfDay
+import com.udacity.asteroidradar.api.*
+import com.udacity.asteroidradar.database.DatabaseAsteroid
 import com.udacity.asteroidradar.database.AsteroidDao
-import com.udacity.asteroidradar.api.TestJavaDataTypesUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -35,8 +31,8 @@ class MainViewModel(
     val status: LiveData<RadarApiStatus>
         get() = _status
 
-    private val _asteroidCallResponse = MutableLiveData<List<Asteroid>>()
-    val asteroidCallResponse: MutableLiveData<List<Asteroid>>
+    private val _asteroidCallResponse = MutableLiveData<List<DatabaseAsteroid>>()
+    val databaseAsteroidCallResponse: MutableLiveData<List<DatabaseAsteroid>>
         get() = _asteroidCallResponse
 
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
@@ -48,7 +44,7 @@ class MainViewModel(
 
     //  TODO_done (02, 03): create a Asteroid liveData var and use a coroutine to initialize it from database
     private val _availableAsteroid = database.getLatestAsteroid()
-    val availableAsteroid: LiveData<Asteroid>?
+    val availableDatabaseAsteroid: LiveData<DatabaseAsteroid>?
         get() = _availableAsteroid
 
     init {
@@ -66,16 +62,16 @@ class MainViewModel(
      * feed to recyclerView
      */
     val asteroids = database.getFilteredAsteroids(dbBasedStartDate, dbBasedEndDate)
-    private suspend fun insert(asteroids: List<Asteroid>) {
+    private suspend fun insert(databaseAsteroids: List<DatabaseAsteroid>) {
         viewModelScope.launch {
-            database.insert(asteroids)
+            database.insert(databaseAsteroids)
         }
     }
 
     private fun getAsteroidsProperties() {
         viewModelScope.launch {
             _status.value = RadarApiStatus.LOADING
-            AsteroidApi.retrofitService.getAsteroids(
+            AsteroidApi.asteroidApiService.getAsteroids(
                 start_date = getNextSevenDaysFormattedDates()[0],
                 end_date = getNextSevenDaysFormattedDates()[1],
                 api_key = BuildConfig.NASA_API_KEY
@@ -84,7 +80,7 @@ class MainViewModel(
                     _asteroidCallResponse.value =
                         parseAsteroidsJsonResult(JSONObject(response.body()!!))
                     viewModelScope.launch {
-                        insert(_asteroidCallResponse.value as ArrayList<Asteroid>)
+                        insert(_asteroidCallResponse.value as ArrayList<DatabaseAsteroid>)
                     }
                     _status.value = RadarApiStatus.DONE
                     print(("Response: " + _asteroidCallResponse.value))
@@ -126,9 +122,9 @@ class MainViewModel(
 
     }
 
-    private suspend fun update(asteroid: Asteroid) {
+    private suspend fun update(databaseAsteroid: DatabaseAsteroid) {
         viewModelScope.launch {
-            database.update(asteroid)
+            database.update(databaseAsteroid)
         }
     }
 
@@ -144,12 +140,12 @@ class MainViewModel(
     }
 
     /** LiveDate (Observable) for Navigation */
-    private val _navigateToDetailsFragment = MutableLiveData<Asteroid?>()
+    private val _navigateToDetailsFragment = MutableLiveData<DatabaseAsteroid?>()
     val navigateToDetailsFragment
         get() = _navigateToDetailsFragment
 
-    fun onAsteroidClicked(asteroidSelected: Asteroid) {
-        _navigateToDetailsFragment.value = asteroidSelected
+    fun onAsteroidClicked(databaseAsteroidSelected: DatabaseAsteroid) {
+        _navigateToDetailsFragment.value = databaseAsteroidSelected
     }
 
     fun onAsteroidNavigated() {

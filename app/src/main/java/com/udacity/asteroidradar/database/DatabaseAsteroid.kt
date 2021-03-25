@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "asteroid_info_table")
 @Parcelize
-data class Asteroid(
+data class DatabaseAsteroid(
     @PrimaryKey(autoGenerate = true)
 //        val asteroidId: Long = 0L,            // default Id, use, hen a constant input is intended
     val asteroidId: Long,

@@ -2,10 +2,10 @@ package com.udacity.asteroidradar.api
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.Constants.BASE_URL
-import com.udacity.asteroidradar.Constants.END_POINT
-import com.udacity.asteroidradar.Constants.PictureOfTHEDAY_END_POINT
-import com.udacity.asteroidradar.PictureOfDay
+import com.udacity.asteroidradar.constant.Constants.BASE_URL
+import com.udacity.asteroidradar.constant.Constants.END_POINT
+import com.udacity.asteroidradar.constant.Constants.PictureOfTHEDAY_END_POINT
+import com.udacity.asteroidradar.database.PictureOfDay
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -14,7 +14,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -61,7 +60,7 @@ interface PictureOfTheDayApiService {
 }
 
 object AsteroidApi {
-    val retrofitService: AsteroidApiService by lazy {
+    val asteroidApiService: AsteroidApiService by lazy {
         retrofit.create(AsteroidApiService::class.java)
     }
 }

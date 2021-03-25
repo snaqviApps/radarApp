@@ -1,4 +1,4 @@
-package com.udacity.asteroidradar.main
+package com.udacity.asteroidradar.main.ui
 
 import android.os.Bundle
 import android.view.*
@@ -11,6 +11,8 @@ import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.api.NetworkUtils
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
+import com.udacity.asteroidradar.main.MainViewModel
+import com.udacity.asteroidradar.main.MainViewModelFactory
 import com.udacity.asteroidradar.view.AsteroidAdapter
 import com.udacity.asteroidradar.view.AsteroidListener
 
@@ -47,8 +49,11 @@ class MainFragment : Fragment() {
 
         mainFragmentViewModel.navigateToDetailsFragment.observe(viewLifecycleOwner, Observer {asteroidsToNavigate ->
             asteroidsToNavigate?.let {
-                this.findNavController().navigate(MainFragmentDirections
-                    .actionMainFragmentToDetailFragment(asteroidsToNavigate))
+                this.findNavController().navigate(
+                    MainFragmentDirections.actionMainFragmentToDetailFragment(
+                        asteroidsToNavigate
+                    )
+                )
                 mainFragmentViewModel.onAsteroidNavigated()
             }
         })

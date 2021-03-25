@@ -1,10 +1,9 @@
-package com.udacity.asteroidradar
+package com.udacity.asteroidradar.application
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
-import androidx.core.content.ContextCompat.getSystemService
 import com.udacity.asteroidradar.api.NetworkUtils
 
 //Application class registered in Manifest file
