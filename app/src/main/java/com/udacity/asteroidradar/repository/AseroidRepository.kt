@@ -6,11 +6,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.await
 
-class AsteroidRepository (private val database: AsteroidDatabase){
+class AsteroidRepository (private val database: AsteroidDatabase) {
 
-    suspend fun refreshAsteroids(){
-        withContext(Dispatchers.IO){
-            val asteroidList = AsteroidApi.asteroidApiService.getAsteroids().await()
-        }
-    }
+//  ----- future implementation
+//    suspend fun refreshAsteroids(){
+//        withContext(Dispatchers.IO){
+//            val asteroidList = AsteroidApi.asteroidApiService.getAsteroids().await()
+//        }
+//    }
 }

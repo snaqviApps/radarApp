@@ -40,7 +40,8 @@ class MainFragment : Fragment() {
             }
         })
 
-        binding.asteroidRecycler.adapter = adapter                              /* get Adapter-handler and assign it to binding-adapter to manager recyclerView */
+        /** get Adapter-handler and assign it to binding-adapter to manager recyclerView */
+        binding.asteroidRecycler.adapter = adapter
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
@@ -58,15 +59,22 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })   /* Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
+        /** Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })
         setHasOptionsMenu(true)
-        return binding.root
 
+        /** executes asteroidApi for fetching Asteroid-Properties, should network become available */
         NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner){
             if (it){
-
+                refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
             }
         }
+
+        return binding.root
+    }
+
+    private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {
+        mainFragmentViewModel.getAsteroidsProperties()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

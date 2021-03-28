@@ -38,15 +38,12 @@ class NetworkUtils constructor(
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 isConnected = true
-//                isNetworkAvailable.postTrue()
                 isNetworkAvailable.postValue(isConnected)
             }
         }
     }
 
 }
-
-
 
   fun parseAsteroidsJsonResult(jsonResult: JSONObject): ArrayList<DatabaseAsteroid> {
         val nearEarthObjectsJson = jsonResult.getJSONObject("near_earth_objects")

@@ -68,7 +68,7 @@ class MainViewModel(
         }
     }
 
-    private fun getAsteroidsProperties() {
+    fun getAsteroidsProperties() {
         viewModelScope.launch {
             _status.value = RadarApiStatus.LOADING
             AsteroidApi.asteroidApiService.getAsteroids(
