@@ -10,7 +10,7 @@ abstract class AsteroidDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AsteroidDatabase? = null
-        fun getInstance(context: Context): AsteroidDatabase {
+        fun getDatabaseInstance(context: Context): AsteroidDatabase {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {

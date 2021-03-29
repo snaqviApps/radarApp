@@ -28,7 +28,7 @@ class MainFragment : Fragment() {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_main, container, false)
         val application = requireNotNull(this.activity).application
-        val dataSource = AsteroidDatabase.getInstance(application).asteroidDao
+        val dataSource = AsteroidDatabase.getDatabaseInstance(application).asteroidDao
         val viewModelFactory = MainViewModelFactory(dataSource, application)
         val mainFragmentViewModel = ViewModelProvider(this,  viewModelFactory).get(MainViewModel::class.java)
 
@@ -40,13 +40,25 @@ class MainFragment : Fragment() {
             }
         })
 
-        /** get Adapter-handler and assign it to binding-adapter to manager recyclerView */
+        /** ORIGINAL: get Adapter-handler and assign it to binding-adapter to manager recyclerView
         binding.asteroidRecycler.adapter = adapter
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
             }
         })
+         *
+         */
+
+        /* REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
+        binding.asteroidRecycler.adapter = adapter
+        mainFragmentViewModel.asteroidList.observe(viewLifecycleOwner, Observer {
+            it.let {
+                adapter.submitList(it)
+            }
+        })
+
+
 
         mainFragmentViewModel.navigateToDetailsFragment.observe(viewLifecycleOwner, Observer {asteroidsToNavigate ->
             asteroidsToNavigate?.let {
@@ -64,18 +76,18 @@ class MainFragment : Fragment() {
         setHasOptionsMenu(true)
 
         /** executes asteroidApi for fetching Asteroid-Properties, should network become available */
-        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner){
-            if (it){
-                refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
-            }
-        }
+//        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner){
+//            if (it){
+//                refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
+//            }
+//        }
 
         return binding.root
     }
 
-    private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {
-        mainFragmentViewModel.getAsteroidsProperties()
-    }
+//    private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {
+//        mainFragmentViewModel.getAsteroidsProperties()
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_overflow_menu, menu)
