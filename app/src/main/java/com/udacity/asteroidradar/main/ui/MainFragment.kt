@@ -13,24 +13,30 @@ import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.main.MainViewModel
 import com.udacity.asteroidradar.main.MainViewModelFactory
+import com.udacity.asteroidradar.repository.AsteroidRepository
 import com.udacity.asteroidradar.view.AsteroidAdapter
 import com.udacity.asteroidradar.view.AsteroidListener
 
 class MainFragment : Fragment() {
 
     lateinit var binding: FragmentMainBinding
-    private val viewModel: MainViewModel by lazy {      /** this instance is not being used */
+    private val viewModel: MainViewModel by lazy {
+        /** this instance is not being used */
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_main, container, false)
+            inflater, R.layout.fragment_main, container, false
+        )
         val application = requireNotNull(this.activity).application
         val dataSource = AsteroidDatabase.getDatabaseInstance(application).asteroidDao
         val viewModelFactory = MainViewModelFactory(dataSource, application)
-        val mainFragmentViewModel = ViewModelProvider(this,  viewModelFactory).get(MainViewModel::class.java)
+        val mainFragmentViewModel =
+            ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         binding.lifecycleOwner = this
         binding.mainAsteroidXmlViewModel = mainFragmentViewModel
@@ -40,17 +46,16 @@ class MainFragment : Fragment() {
             }
         })
 
-        /** ORIGINAL: get Adapter-handler and assign it to binding-adapter to manager recyclerView
+        /**
+         * ORIGINAL: get Adapter-handler and assign it to binding-adapter to manager recyclerView
         binding.asteroidRecycler.adapter = adapter
         mainFragmentViewModel.asteroids.observe(viewLifecycleOwner, Observer {
-            it.let {
-                adapter.submitList(it)
-            }
+        it.let {
+        adapter.submitList(it)
+        }
         })
-         *
          */
-
-        /* REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
+        /** REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
         mainFragmentViewModel.asteroidList.observe(viewLifecycleOwner, Observer {
             it.let {
@@ -58,41 +63,43 @@ class MainFragment : Fragment() {
             }
         })
 
-
-
-        mainFragmentViewModel.navigateToDetailsFragment.observe(viewLifecycleOwner, Observer {asteroidsToNavigate ->
-            asteroidsToNavigate?.let {
-                this.findNavController().navigate(
-                    MainFragmentDirections.actionMainFragmentToDetailFragment(
-                        asteroidsToNavigate
+        mainFragmentViewModel.navigateToDetailsFragment.observe(
+            viewLifecycleOwner,
+            Observer { asteroidsToNavigate ->
+                asteroidsToNavigate?.let {
+                    this.findNavController().navigate(
+                        MainFragmentDirections.actionMainFragmentToDetailFragment(
+                            asteroidsToNavigate
+                        )
                     )
-                )
-                mainFragmentViewModel.onAsteroidNavigated()
-            }
-        })
+                    mainFragmentViewModel.onAsteroidNavigated()
+                }
+            })
 
-        /** Observing Picture-of-the-Day:pictureOfDay, in 'MainViewModel' */
-        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer {  })
+        mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer { })
+        mainFragmentViewModel.status.observe(viewLifecycleOwner, Observer { })
+
         setHasOptionsMenu(true)
 
         /** executes asteroidApi for fetching Asteroid-Properties, should network become available */
-//        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner){
-//            if (it){
-//                refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
-//            }
-//        }
-
+        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner) {
+            if (it) {
+                refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
+            }
+        }
         return binding.root
+
     }
 
-//    private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {
-//        mainFragmentViewModel.getAsteroidsProperties()
-//    }
+    private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {
+        mainFragmentViewModel.mainViewModelRefreshAsteroidData()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_overflow_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return true
     }

@@ -19,10 +19,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-enum class RadarApiStatus { LOADING, ERROR, DONE }
 
-//open class AsteroidRepository (private val asteroidDAO:AsteroidDao) {
-open class AsteroidRepository (private val database: AsteroidDatabase) {
+open class AsteroidRepository(private val database: AsteroidDatabase) {
 
     private val _status = MutableLiveData<RadarApiStatus>()
     val status: LiveData<RadarApiStatus>
@@ -32,16 +30,16 @@ open class AsteroidRepository (private val database: AsteroidDatabase) {
     val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
-
     private val _repoCallResponse = MutableLiveData<List<DatabaseAsteroid>>()
-    val repoCallResponse : LiveData<List<DatabaseAsteroid>>              // encapsulation does not work, error: kapt
+    val repoCallResponse: LiveData<List<DatabaseAsteroid>>
         get() {
             return _repoCallResponse
         }
 
-    open suspend fun refreshAsteroids() {
+    suspend fun refreshAsteroids() {
+        _status.value = RadarApiStatus.LOADING
         withContext(Dispatchers.IO) {
-            val asteroidList = AsteroidApi.asteroidApiService.getAsteroids(
+            AsteroidApi.asteroidApiService.getAsteroids(
                 start_date = getNextSevenDaysFormattedDates()[0],
                 end_date = getNextSevenDaysFormattedDates()[1],
                 api_key = BuildConfig.NASA_API_KEY
@@ -49,50 +47,38 @@ open class AsteroidRepository (private val database: AsteroidDatabase) {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     _repoCallResponse.value =
                         parseAsteroidsJsonResult(JSONObject(response.body()))
-//                    _status.value = RadarApiStatus.DONE
-                    print(("Response: " + _repoCallResponse.value))
+                    _status.value = RadarApiStatus.DONE
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    _status.value = RadarApiStatus.DONE
+                    _status.value = RadarApiStatus.ERROR
                 }
             }.also {
                 try {
-//                    _status.value = RadarApiStatus.LOADING
                     val pictureResult =
                         PictureOfTheDayApi.retrofitPicOfTheDayService.getPictureOfTheDay(
                             BuildConfig.NASA_API_KEY
                         )
                     pictureResult.enqueue(object : Callback<PictureOfDay> {
                         override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
-//                            _status.value = RadarApiStatus.ERROR
+                            _status.value = RadarApiStatus.ERROR
                             Log.e("TAG", "exception: ${t.message}")
                         }
+
                         override fun onResponse(
                             call: Call<PictureOfDay>,
                             response: Response<PictureOfDay>
                         ) {
                             _pictureOfDay.value = response.body()
-//                            _status.value = RadarApiStatus.DONE
+                            _status.value = RadarApiStatus.DONE
                             Log.i("picture-json: ", _pictureOfDay.value.toString())
                         }
                     })
                 } catch (e: Exception) {
-                    print("picture-json -exception: ${e.stackTrace}")
                     Log.i("picture-json: ", e.stackTraceToString())
                 }
-
-//            }).wait()
-            //            Error: E/AndroidRuntime: FATAL EXCEPTION: main
-//    Process: com.udacity.asteroidradar, PID: 23502
-//    java.lang.IllegalMonitorStateException: object not locked by thread before wait()
             })
-
-//            database.asteroidDao.insert(asteroidList as List<DatabaseAsteroid>)
-//            database.asteroidDao.insert(asteroidList as LiveData<List<DatabaseAsteroid>>)
-            database.asteroidDao.insert(asteroidList as List<DatabaseAsteroid>)             // warning on 'as': 'this cast can never succeed'
+            _repoCallResponse.value?.let { database.asteroidDao.insert(it) }
         }
     }
 }
-
-
