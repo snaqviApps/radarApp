@@ -79,16 +79,15 @@ class MainFragment : Fragment() {
         mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer { })
         mainFragmentViewModel.status.observe(viewLifecycleOwner, Observer { })
 
-        setHasOptionsMenu(true)
-
         /** executes asteroidApi for fetching Asteroid-Properties, should network become available */
         NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner) {
             if (it) {
                 refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
             }
         }
-        return binding.root
 
+        setHasOptionsMenu(true)
+        return binding.root
     }
 
     private fun refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel: MainViewModel) {

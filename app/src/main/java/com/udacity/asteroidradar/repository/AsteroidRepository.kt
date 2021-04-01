@@ -1,6 +1,6 @@
 package com.udacity.asteroidradar.repository
 
-import android.util.Log
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.udacity.asteroidradar.BuildConfig
@@ -17,7 +17,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import timber.log.Timber
+import java.net.UnknownHostException
 
 
 open class AsteroidRepository(private val database: AsteroidDatabase) {
@@ -62,7 +65,19 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                     pictureResult.enqueue(object : Callback<PictureOfDay> {
                         override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
                             _status.value = RadarApiStatus.ERROR
-                            Log.e("TAG", "exception: ${t.message}")
+                            when(t) {
+                                is UnknownHostException -> {
+                                    Timber.e("no network error: ${t.message}")
+
+                                }
+                                is HttpException -> {
+                                    val httpErrorCode = t.code()
+                                    val errorMsg = t.message()
+                                } else -> {
+                                    Timber.e("Other error while trying to download picOfTheDay")
+                                }
+                            }
+                            Timber.e("exception: ${t.message}")
                         }
 
                         override fun onResponse(
@@ -71,11 +86,11 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                         ) {
                             _pictureOfDay.value = response.body()
                             _status.value = RadarApiStatus.DONE
-                            Log.i("picture-json: ", _pictureOfDay.value.toString())
+                            Timber.i(_pictureOfDay.value.toString())
                         }
                     })
                 } catch (e: Exception) {
-                    Log.i("picture-json: ", e.stackTraceToString())
+                    Timber.i("Exception picture of the day:  %s", e.stackTraceToString())
                 }
             })
             _repoCallResponse.value?.let { database.asteroidDao.insert(it) }

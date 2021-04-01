@@ -67,10 +67,9 @@ dependencies {
     implementation group: 'com.squareup.okhttp', name: 'okhttp', version: '2.7.5'
     implementation 'com.google.code.gson:gson:2.8.6'
 
-
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.3.1'
-
 
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
@@ -80,12 +79,11 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
-//    implementation "androidx.room:room-runtime:2.2.6"     /** complains about -ktx requirement, then below line worked */
     implementation 'androidx.room:room-ktx:2.2.6'
 
     kapt "androidx.room:room-compiler:2.2.6"
 
-    implementation "android.arch.work:work-runtime-ktx:1.0.1"
+    implementation "android.arch.work:work-runtime-ktx:$version_worker"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
