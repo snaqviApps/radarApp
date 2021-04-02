@@ -23,4 +23,6 @@
     <string name="AsteroidType">Asteroid Type</string>
     <string name="asteroid_type">Asteroid-Type</string>
     <string name="status_view">"Status view"</string>
+    <string name="image_of_day">Image-of-day</string>
+    <string name="help_button">help-button</string>
 </resources>
