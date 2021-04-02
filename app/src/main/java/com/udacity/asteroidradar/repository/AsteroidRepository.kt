@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.api.AsteroidApi
-import com.udacity.asteroidradar.api.PictureOfTheDayApi
+import com.udacity.asteroidradar.api.PictureOfDayApi
 import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidDatabase
@@ -59,7 +59,7 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
             }.also {
                 try {
                     val pictureResult =
-                        PictureOfTheDayApi.retrofitPicOfTheDayService.getPictureOfTheDay(
+                        PictureOfDayApi.RETROFIT_PIC_OF_DAY_SERVICE.getPictureOfDay(
                             BuildConfig.NASA_API_KEY
                         )
                     pictureResult.enqueue(object : Callback<PictureOfDay> {
@@ -73,13 +73,13 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                                 is HttpException -> {
                                     val httpErrorCode = t.code()
                                     val errorMsg = t.message()
+                                    Timber.e("pic-of-day error: $errorMsg")
                                 } else -> {
                                     Timber.e("Other error while trying to download picOfTheDay")
                                 }
                             }
                             Timber.e("exception: ${t.message}")
                         }
-
                         override fun onResponse(
                             call: Call<PictureOfDay>,
                             response: Response<PictureOfDay>

@@ -4,7 +4,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.constant.Constants.BASE_URL
 import com.udacity.asteroidradar.constant.Constants.END_POINT
-import com.udacity.asteroidradar.constant.Constants.PictureOfTHEDAY_END_POINT
+import com.udacity.asteroidradar.constant.Constants.PictureOfDAY_END_POINT
 import com.udacity.asteroidradar.database.PictureOfDay
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -28,18 +28,18 @@ private val retrofit = Retrofit.Builder()
         .client(OkHttpClient().newBuilder()
                 /**
                  * To utilize in case of connection - sync - time-outs
-                .connectTimeout(50, TimeUnit.MILLISECONDS)
-                .readTimeout(50, TimeUnit.MILLISECONDS)
-                .callTimeout(10, TimeUnit.MILLISECONDS)
+                    .connectTimeout(50, TimeUnit.MILLISECONDS)
+                    .readTimeout(50, TimeUnit.MILLISECONDS)
+                    .callTimeout(10, TimeUnit.MILLISECONDS)
                 */
                 .build())
         .build()
 
-private val moshiPicOfTheDay = Moshi.Builder()
+private val moshiPicOfDay = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 private val retrofitPicOfTheDay = Retrofit.Builder()
-        .addConverterFactory(MoshiConverterFactory.create(moshiPicOfTheDay))
+        .addConverterFactory(MoshiConverterFactory.create(moshiPicOfDay))
         .baseUrl(BASE_URL)
         .build()
 
@@ -52,9 +52,9 @@ interface AsteroidApiService {
     ): Call<String>
 }
 
-interface PictureOfTheDayApiService {
-    @GET(PictureOfTHEDAY_END_POINT)
-    fun getPictureOfTheDay(
+interface PictureOfDayApiService {
+    @GET(PictureOfDAY_END_POINT)
+    fun getPictureOfDay(
             @Query("api_key") api_key: String):
             Call<PictureOfDay>
 }
@@ -65,8 +65,8 @@ object AsteroidApi {
     }
 }
 
-object PictureOfTheDayApi {
-    val retrofitPicOfTheDayService: PictureOfTheDayApiService by lazy {
-        retrofitPicOfTheDay.create(PictureOfTheDayApiService::class.java)
+object PictureOfDayApi {
+    val RETROFIT_PIC_OF_DAY_SERVICE: PictureOfDayApiService by lazy {
+        retrofitPicOfTheDay.create(PictureOfDayApiService::class.java)
     }
 }
