@@ -2,10 +2,12 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 import com.udacity.asteroidradar.database.AsteroidDao
+import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.AsteroidDatabase.Companion.getDatabaseInstance
 import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
@@ -27,7 +29,9 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
         }
     }
 
-    val asteroidList = asteroidRepository.repoCallResponse
+    val asteroidListMainViewModel = asteroidRepository.repoCallResponse // orginal implementation, working
+    val dbDataMainViewModel = asteroidRepository.downloadedData
+
     val pictureOfDay = asteroidRepository.pictureOfDay
     val status = asteroidRepository.status
 

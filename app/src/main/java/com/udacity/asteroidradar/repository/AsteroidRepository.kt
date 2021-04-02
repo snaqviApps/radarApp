@@ -39,6 +39,12 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
             return _repoCallResponse
         }
 
+    private val _downloadedData = database.asteroidDao.getAllAsteroids()
+    val downloadedData: LiveData<List<DatabaseAsteroid>?>
+        get() {
+            return _downloadedData
+        }
+
     suspend fun refreshAsteroids() {
         _status.value = RadarApiStatus.LOADING
         withContext(Dispatchers.IO) {

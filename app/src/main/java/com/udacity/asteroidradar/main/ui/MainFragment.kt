@@ -57,7 +57,13 @@ class MainFragment : Fragment() {
          */
         /** REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
-        mainFragmentViewModel.asteroidList.observe(viewLifecycleOwner, Observer {
+//        mainFragmentViewModel.asteroidListMainViewModel.observe(viewLifecycleOwner, Observer {
+//            it.let {
+//                adapter.submitList(it)
+//            }
+//        })
+
+        mainFragmentViewModel.dbDataMainViewModel.observe(viewLifecycleOwner, Observer {
             it.let {
                 adapter.submitList(it)
             }
