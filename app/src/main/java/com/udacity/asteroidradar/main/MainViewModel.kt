@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.database.DatabaseAsteroid
@@ -13,13 +14,17 @@ import kotlinx.coroutines.launch
 
 enum class RadarApiStatus { LOADING, ERROR, DONE }
 
-class MainViewModel(val database: AsteroidDao, application: Application) : AndroidViewModel(application) {
+class MainViewModel(val asteroidDao:  AsteroidDao, application: Application) :
+    AndroidViewModel(application) {
 
     private val databaseInstance = getDatabaseInstance(application)
     private val asteroidRepository = AsteroidRepository(databaseInstance)
 
     init {
-            mainViewModelRefreshAsteroidData()
+        mainViewModelRefreshAsteroidData()
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids()
+        }
     }
 
     fun mainViewModelRefreshAsteroidData() {
@@ -28,17 +33,13 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
         }
     }
 
-//    val asteroidListMainViewModel = asteroidRepository.repoCallResponse     // orginal implementation, working
-
-    /** not updating the listView for now */
-    val dbDataMainViewModel = asteroidRepository.downloadedData
-
     val pictureOfDay = asteroidRepository.pictureOfDay
     val status = asteroidRepository.status
+    val dbDataMainViewModel = asteroidRepository.downloadedData
 
     private suspend fun update(databaseAsteroid: DatabaseAsteroid) {
         viewModelScope.launch {
-            database.update(databaseAsteroid)
+            asteroidDao.update(databaseAsteroid)
         }
     }
 
@@ -50,7 +51,7 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
     }
 
     private suspend fun clear() {
-        database.clear()
+        asteroidDao.clear()
     }
 
     private val _navigateToDetailsFragment = MutableLiveData<DatabaseAsteroid?>()

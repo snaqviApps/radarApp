@@ -21,13 +21,15 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.net.UnknownHostException
-
+import java.util.ArrayList
 
 open class AsteroidRepository(private val database: AsteroidDatabase) {
 
+    private var asteroidData: ArrayList<DatabaseAsteroid>? = null
     private val _status = MutableLiveData<RadarApiStatus>()
     val status: LiveData<RadarApiStatus>
         get() = _status
+
 
     private val _pictureOfDay = MutableLiveData<PictureOfDay>()
     val pictureOfDay: LiveData<PictureOfDay>
@@ -54,15 +56,16 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                 api_key = BuildConfig.NASA_API_KEY
             ).enqueue(object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
-                    _repoCallResponse.value =
-                        parseAsteroidsJsonResult(JSONObject(response.body()))
+                    _repoCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()))
+//                    asteroidData = parseAsteroidsJsonResult(JSONObject(response.body()))
                     _status.value = RadarApiStatus.DONE
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     _status.value = RadarApiStatus.ERROR
                 }
-            }.also {
+            }).also {
+                asteroidData?.let { database.asteroidDao.insert(it) }
                 try {
                     val pictureResult =
                         PictureOfDayApi.RETROFIT_PIC_OF_DAY_SERVICE.getPictureOfDay(
@@ -71,21 +74,22 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                     pictureResult.enqueue(object : Callback<PictureOfDay> {
                         override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
                             _status.value = RadarApiStatus.ERROR
-                            when(t) {
+                            when (t) {
                                 is UnknownHostException -> {
                                     Timber.e("no network error: ${t.message}")
-
                                 }
                                 is HttpException -> {
                                     val httpErrorCode = t.code()
                                     val errorMsg = t.message()
                                     Timber.e("pic-of-day error: $errorMsg")
-                                } else -> {
+                                }
+                                else -> {
                                     Timber.e("Other error while trying to download picOfTheDay")
                                 }
                             }
                             Timber.e("exception: ${t.message}")
                         }
+
                         override fun onResponse(
                             call: Call<PictureOfDay>,
                             response: Response<PictureOfDay>
@@ -98,8 +102,11 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                 } catch (e: Exception) {
                     Timber.i("Exception picture of the day:  %s", e.stackTraceToString())
                 }
-            })
-            _repoCallResponse.value?.let { database.asteroidDao.insert(it) }
+
+            }.also {
+//            asteroidData?.let { database.asteroidDao.insert(it) }
+                _repoCallResponse.value?.let { database.asteroidDao.insert(it) }
+            }
         }
     }
 }

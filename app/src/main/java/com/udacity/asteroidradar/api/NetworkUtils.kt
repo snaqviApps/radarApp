@@ -6,7 +6,6 @@ import android.net.Network
 import android.net.NetworkRequest
 import androidx.lifecycle.MutableLiveData
 import com.udacity.asteroidradar.constant.Constants
-import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 import org.json.JSONObject
 import java.text.SimpleDateFormat

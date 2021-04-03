@@ -23,7 +23,7 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Database
 
     // 3. TODO_ : Refactor and rename the ViewHolder class’s constructor parameter to take a MainAsteroidItemListBinding
     /**
-     * @param MainAsteroidItemListBinding
+     * @param binding
      */
     class AsteroidViewHolder private constructor(
         private val binding: MainAsteroidItemListBinding): RecyclerView.ViewHolder(binding.root) {
