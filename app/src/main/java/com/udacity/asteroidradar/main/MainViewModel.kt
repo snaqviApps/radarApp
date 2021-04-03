@@ -2,12 +2,10 @@ package com.udacity.asteroidradar.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.database.DatabaseAsteroid
 import com.udacity.asteroidradar.database.AsteroidDao
-import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.AsteroidDatabase.Companion.getDatabaseInstance
 import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
@@ -19,6 +17,7 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
 
     private val databaseInstance = getDatabaseInstance(application)
     private val asteroidRepository = AsteroidRepository(databaseInstance)
+
     init {
             mainViewModelRefreshAsteroidData()
     }
@@ -29,7 +28,9 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
         }
     }
 
-    val asteroidListMainViewModel = asteroidRepository.repoCallResponse // orginal implementation, working
+//    val asteroidListMainViewModel = asteroidRepository.repoCallResponse     // orginal implementation, working
+
+    /** not updating the listView for now */
     val dbDataMainViewModel = asteroidRepository.downloadedData
 
     val pictureOfDay = asteroidRepository.pictureOfDay
@@ -63,4 +64,5 @@ class MainViewModel(val database: AsteroidDao, application: Application) : Andro
     fun onAsteroidNavigated() {
         _navigateToDetailsFragment.value = null
     }
+
 }
