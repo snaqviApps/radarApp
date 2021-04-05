@@ -10,6 +10,7 @@ import com.udacity.asteroidradar.database.AsteroidDao
 import com.udacity.asteroidradar.database.AsteroidDatabase.Companion.getDatabaseInstance
 import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 enum class RadarApiStatus { LOADING, ERROR, DONE }
@@ -21,10 +22,8 @@ class MainViewModel(val asteroidDao:  AsteroidDao, application: Application) :
     private val asteroidRepository = AsteroidRepository(databaseInstance)
 
     init {
+        Timber.i("init() called")
         mainViewModelRefreshAsteroidData()
-        viewModelScope.launch {
-            asteroidRepository.refreshAsteroids()
-        }
     }
 
     fun mainViewModelRefreshAsteroidData() {

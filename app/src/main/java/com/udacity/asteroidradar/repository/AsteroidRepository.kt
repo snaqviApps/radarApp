@@ -22,7 +22,9 @@ import retrofit2.Response
 import timber.log.Timber
 import java.net.UnknownHostException
 import java.util.ArrayList
+import javax.inject.Singleton
 
+@Singleton
 open class AsteroidRepository(private val database: AsteroidDatabase) {
 
     private var asteroidData: ArrayList<DatabaseAsteroid>? = null

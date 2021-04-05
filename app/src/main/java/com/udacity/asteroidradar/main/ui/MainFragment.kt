@@ -6,19 +6,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.api.NetworkUtils
-import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.main.MainViewModel
 import com.udacity.asteroidradar.main.MainViewModelFactory
-import com.udacity.asteroidradar.repository.AsteroidRepository
 import com.udacity.asteroidradar.view.AsteroidAdapter
 import com.udacity.asteroidradar.view.AsteroidListener
-import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
 
@@ -49,9 +45,9 @@ class MainFragment : Fragment() {
             }
         })
 
-        mainFragmentViewModel.viewModelScope.launch {
-            mainFragmentViewModel.mainViewModelRefreshAsteroidData()
-        }
+//        mainFragmentViewModel.viewModelScope.launch {
+//            mainFragmentViewModel.mainViewModelRefreshAsteroidData()
+//        }
 
         /**
          * ORIGINAL: get Adapter-handler and assign it to binding-adapter to manager recyclerView
@@ -68,19 +64,21 @@ class MainFragment : Fragment() {
         /** REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
 
-        mainFragmentViewModel.asteroidDao.getFilteredAsteroids(                                         // does not populate recyclerView first time launch, except airplane mode is toggled
-            getNextSevenDaysFormattedDates()[0],
-            getNextSevenDaysFormattedDates()[1]
-        ).observe(viewLifecycleOwner, Observer {
-            it.let {
-                adapter.submitList(it)
-            }
-        })
-//           mainFragmentViewModel.dbDataMainViewModel.observe(viewLifecycleOwner, Observer {       // does not populate recyclerView first time launch, except airplane mode is toggled
+//        mainFragmentViewModel.asteroidDao.getFilteredAsteroids(                                         // does not populate recyclerView first time launch, except airplane mode is toggled
+//            getNextSevenDaysFormattedDates()[0],
+//            getNextSevenDaysFormattedDates()[1]
+//        ).observe(viewLifecycleOwner, Observer {
 //            it.let {
 //                adapter.submitList(it)
 //            }
 //        })
+        mainFragmentViewModel.dbDataMainViewModel.observe(
+            viewLifecycleOwner,
+            Observer {       // does not populate recyclerView first time launch, except airplane mode is toggled
+                it.let {
+                    adapter.submitList(it)
+                }
+            })
 
 //        mainFragmentViewModel.database.getAllAsteroids().observe(viewLifecycleOwner, Observer {     // does not populate recyclerView first time launch, except airplane mode is toggled
 //            it.let {
