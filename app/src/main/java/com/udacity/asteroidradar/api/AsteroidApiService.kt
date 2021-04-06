@@ -7,41 +7,39 @@ import com.udacity.asteroidradar.constant.Constants.END_POINT
 import com.udacity.asteroidradar.constant.Constants.PictureOfDAY_END_POINT
 import com.udacity.asteroidradar.database.PictureOfDay
 import okhttp3.OkHttpClient
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import java.util.*
 
 
 /**
  * This is complete URL to be constructed with to dynamic info
- * @param start_date
- * @param end_date
  *
  */
 private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(ScalarsConverterFactory.create())
-        .client(OkHttpClient().newBuilder()
-                /**
-                 * To utilize in case of connection - sync - time-outs
-                    .connectTimeout(50, TimeUnit.MILLISECONDS)
-                    .readTimeout(50, TimeUnit.MILLISECONDS)
-                    .callTimeout(10, TimeUnit.MILLISECONDS)
-                */
-                .build())
-        .build()
+    .baseUrl(BASE_URL)
+    .addConverterFactory(ScalarsConverterFactory.create())
+    .client(
+        OkHttpClient().newBuilder()
+            /**
+             * To utilize in case of connection - sync - time-outs
+            .connectTimeout(50, TimeUnit.MILLISECONDS)
+            .readTimeout(50, TimeUnit.MILLISECONDS)
+            .callTimeout(10, TimeUnit.MILLISECONDS)
+             */
+            .build()
+    )
+    .build()
 
 private val moshiPicOfDay = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
+    .add(KotlinJsonAdapterFactory())
+    .build()
 private val retrofitPicOfTheDay = Retrofit.Builder()
-        .addConverterFactory(MoshiConverterFactory.create(moshiPicOfDay))
-        .baseUrl(BASE_URL)
-        .build()
+    .addConverterFactory(MoshiConverterFactory.create(moshiPicOfDay))
+    .baseUrl(BASE_URL)
+    .build()
 
 interface AsteroidApiService {
     @GET(END_POINT.plus("feed"))
@@ -49,15 +47,16 @@ interface AsteroidApiService {
         @Query("start_date") start_date: String,
         @Query("end_date") end_date: String,
         @Query("api_key") api_key: String
-//    ): Call<String>
     ): String
 }
 
 interface PictureOfDayApiService {
     @GET(PictureOfDAY_END_POINT)
-    fun getPictureOfDay(
-            @Query("api_key") api_key: String):
-            Call<PictureOfDay>
+    suspend fun getPictureOfDay(
+        @Query("api_key") api_key: String
+    ):
+//            Call<PictureOfDay>
+            PictureOfDay
 }
 
 object AsteroidApi {

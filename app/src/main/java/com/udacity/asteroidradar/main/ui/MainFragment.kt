@@ -44,11 +44,6 @@ class MainFragment : Fragment() {
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
         })
-
-//        mainFragmentViewModel.viewModelScope.launch {
-//            mainFragmentViewModel.mainViewModelRefreshAsteroidData()
-//        }
-
         /**
          * ORIGINAL: get Adapter-handler and assign it to binding-adapter to manager recyclerView
         binding.asteroidRecycler.adapter = adapter
@@ -56,36 +51,17 @@ class MainFragment : Fragment() {
         it.let {
         adapter.submitList(it)
         }
-        })
-         */
+        })*/
 
         mainFragmentViewModel.status.observe(viewLifecycleOwner, Observer { })
         mainFragmentViewModel.pictureOfDay.observe(viewLifecycleOwner, Observer { })
         /** REPOSITORY: get Adapter-handler and assign it to binding-adapter to manager recyclerView */
         binding.asteroidRecycler.adapter = adapter
-
-//        mainFragmentViewModel.asteroidDao.getFilteredAsteroids(                                         // does not populate recyclerView first time launch, except airplane mode is toggled
-//            getNextSevenDaysFormattedDates()[0],
-//            getNextSevenDaysFormattedDates()[1]
-//        ).observe(viewLifecycleOwner, Observer {
-//            it.let {
-//                adapter.submitList(it)
-//            }
-//        })
-        mainFragmentViewModel.dbDataMainViewModel.observe(
-            viewLifecycleOwner,
-            Observer {       // does not populate recyclerView first time launch, except airplane mode is toggled
-                it.let {
-                    adapter.submitList(it)
-                }
-            })
-
-//        mainFragmentViewModel.database.getAllAsteroids().observe(viewLifecycleOwner, Observer {     // does not populate recyclerView first time launch, except airplane mode is toggled
-//            it.let {
-//                adapter.submitList(it)
-//            }
-//        })
-
+        mainFragmentViewModel.dbDataMainViewModel.observe(viewLifecycleOwner, {
+            it.let {
+                adapter.submitList(it)
+            }
+        })
         mainFragmentViewModel.navigateToDetailsFragment.observe(
             viewLifecycleOwner,
             Observer { asteroidsToNavigate ->
