@@ -52,21 +52,22 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
     suspend fun refreshAsteroids() {
         _status.value = RadarApiStatus.LOADING
         withContext(Dispatchers.IO) {
-            AsteroidApi.asteroidApiService.getAsteroids(
-                start_date = getNextSevenDaysFormattedDates()[0],
-                end_date = getNextSevenDaysFormattedDates()[1],
-                api_key = BuildConfig.NASA_API_KEY
-            ).enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    _repoCallResponse.value = parseAsteroidsJsonResult(JSONObject(response.body()))
-//                    asteroidData = parseAsteroidsJsonResult(JSONObject(response.body()))
-                    _status.value = RadarApiStatus.DONE
-                }
+           try {
+               val result =  AsteroidApi.asteroidApiService.getAsteroids(
+                   start_date = getNextSevenDaysFormattedDates()[0],
+                   end_date = getNextSevenDaysFormattedDates()[1],
+                   api_key = BuildConfig.NASA_API_KEY)
+               database.asteroidDao.insert(parseAsteroidsJsonResult(JSONObject(result)))
+               Timber.i("retrofit:Coroutines combo: $result")
+               _status.value = RadarApiStatus.DONE
+           } catch (exception: Exception){
+               Timber.e("error getting asteroid-data from server: ${exception.printStackTrace()}")
+               exception.printStackTrace()
+               _status.postValue(RadarApiStatus.ERROR)
+           }
 
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    _status.value = RadarApiStatus.ERROR
-                }
-            }).also {
+        }
+            .also {
                 asteroidData?.let { database.asteroidDao.insert(it) }
                 try {
                     val pictureResult =
@@ -91,7 +92,6 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                             }
                             Timber.e("exception: ${t.message}")
                         }
-
                         override fun onResponse(
                             call: Call<PictureOfDay>,
                             response: Response<PictureOfDay>
@@ -104,11 +104,6 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
                 } catch (e: Exception) {
                     Timber.i("Exception picture of the day:  %s", e.stackTraceToString())
                 }
-
-            }.also {
-//            asteroidData?.let { database.asteroidDao.insert(it) }
-                _repoCallResponse.value?.let { database.asteroidDao.insert(it) }
             }
         }
     }
-}

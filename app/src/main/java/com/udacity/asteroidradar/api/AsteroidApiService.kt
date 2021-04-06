@@ -45,11 +45,12 @@ private val retrofitPicOfTheDay = Retrofit.Builder()
 
 interface AsteroidApiService {
     @GET(END_POINT.plus("feed"))
-    fun getAsteroids(
+    suspend fun getAsteroids(
         @Query("start_date") start_date: String,
         @Query("end_date") end_date: String,
         @Query("api_key") api_key: String
-    ): Call<String>
+//    ): Call<String>
+    ): String
 }
 
 interface PictureOfDayApiService {
