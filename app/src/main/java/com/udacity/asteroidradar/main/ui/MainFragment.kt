@@ -18,6 +18,8 @@ import com.udacity.asteroidradar.view.AsteroidListener
 
 class MainFragment : Fragment() {
 
+    private lateinit var adapter: AsteroidAdapter
+    private lateinit var mainFragmentViewModel: MainViewModel
     lateinit var binding: FragmentMainBinding
     private val viewModel: MainViewModel by lazy {
         /** this instance is not being used */
@@ -34,12 +36,13 @@ class MainFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = AsteroidDatabase.getDatabaseInstance(application).asteroidDao
         val viewModelFactory = MainViewModelFactory(dataSource, application)
-        val mainFragmentViewModel =
+        mainFragmentViewModel =
             ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
 
         binding.lifecycleOwner = this
         binding.mainAsteroidXmlViewModel = mainFragmentViewModel
-        val adapter = AsteroidAdapter(AsteroidListener { asteroid ->
+
+        adapter = AsteroidAdapter(AsteroidListener { asteroid ->
             run {
                 mainFragmentViewModel.onAsteroidClicked(asteroid)
             }
@@ -74,9 +77,7 @@ class MainFragment : Fragment() {
                     mainFragmentViewModel.onAsteroidNavigated()
                 }
             })
-
-        /** executes asteroidApi for fetching Asteroid-Properties, should network become available */
-        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner) {
+        NetworkUtils.isNetworkAvailable.observe(viewLifecycleOwner) {       /** Is network available */
             if (it) {
                 refreshAsteroidDataWhenNetworkIsAvailable(mainFragmentViewModel)
             }
@@ -96,6 +97,24 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return true
+        return when (item.itemId) {
+            R.id.show_latest_menu -> {
+                mainFragmentViewModel.latestDbMainViewModel.observe(viewLifecycleOwner, Observer {
+                    it.let {
+                        adapter.submitList(it)
+                    }
+                })
+                true
+            }
+            R.id.show_week_menu -> {
+                mainFragmentViewModel.dbDataMainViewModel.observe(viewLifecycleOwner, Observer {
+                    it.let {
+                        adapter.submitList(it)
+                    }
+                })
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

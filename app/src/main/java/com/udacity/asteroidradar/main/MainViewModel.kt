@@ -11,9 +11,7 @@ import com.udacity.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
 enum class RadarApiStatus { LOADING, ERROR, DONE }
-
 class MainViewModel(val asteroidDao:  AsteroidDao, application: Application) :
     AndroidViewModel(application) {
 
@@ -34,7 +32,7 @@ class MainViewModel(val asteroidDao:  AsteroidDao, application: Application) :
     val pictureOfDay = asteroidRepository.pictureOfDay
     val status = asteroidRepository.status
     val dbDataMainViewModel = asteroidRepository.downloadedData
-
+    val latestDbMainViewModel = asteroidRepository.latestAsteroid
     private suspend fun update(databaseAsteroid: DatabaseAsteroid) {
         viewModelScope.launch {
             asteroidDao.update(databaseAsteroid)

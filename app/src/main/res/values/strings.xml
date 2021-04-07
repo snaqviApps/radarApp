@@ -25,4 +25,5 @@
     <string name="status_view">"Status view"</string>
     <string name="image_of_day">Image-of-day</string>
     <string name="help_button">help-button</string>
+    <string name="latest_asteroid">Latest Asteroid</string>
 </resources>

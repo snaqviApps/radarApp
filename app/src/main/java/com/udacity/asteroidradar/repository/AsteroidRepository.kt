@@ -31,6 +31,7 @@ open class AsteroidRepository(private val database: AsteroidDatabase) {
     val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
+    val latestAsteroid = database.asteroidDao.getLatestAsteroid()
     private val _downloadedData = database.asteroidDao.getAllAsteroids()
     val downloadedData: LiveData<List<DatabaseAsteroid>?>
         get() {
